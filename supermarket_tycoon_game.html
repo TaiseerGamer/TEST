@@ -1,0 +1,397 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0f1923;--surface:#162030;--card:#1c2b3a;--accent:#f5c518;--accent2:#2ecc71;--accent3:#e74c3c;
+    --text:#eaf0f8;--muted:#7a9ab5;--border:#243347;
+  }
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;min-height:600px;overflow-x:hidden}
+  #game{display:flex;flex-direction:column;height:100%;min-height:600px}
+  #topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+  .logo{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--accent);letter-spacing:2px}
+  .stats-row{display:flex;gap:12px;flex-wrap:wrap}
+  .stat{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:5px 12px;display:flex;align-items:center;gap:6px;font-size:13px}
+  .stat .val{font-weight:600;color:var(--accent);font-size:14px}
+  .stat .lbl{color:var(--muted);font-size:11px}
+  #main{display:grid;grid-template-columns:220px 1fr 200px;flex:1;gap:0;overflow:hidden}
+  #sidebar{background:var(--surface);border-right:1px solid var(--border);padding:12px;display:flex;flex-direction:column;gap:8px;overflow-y:auto}
+  .section-title{font-family:'Bebas Neue',sans-serif;font-size:13px;color:var(--muted);letter-spacing:2px;padding:4px 0 2px;border-bottom:1px solid var(--border);margin-bottom:4px}
+  .upgrade-btn{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 10px;cursor:pointer;text-align:left;width:100%;color:var(--text);transition:.15s;position:relative;overflow:hidden}
+  .upgrade-btn:hover{border-color:var(--accent);background:#1f3045}
+  .upgrade-btn.cant-afford{opacity:.5;cursor:not-allowed}
+  .upgrade-btn .uname{font-weight:600;font-size:13px}
+  .upgrade-btn .udesc{font-size:11px;color:var(--muted);margin-top:2px}
+  .upgrade-btn .ucost{font-size:12px;color:var(--accent);font-weight:600;margin-top:4px}
+  .upgrade-btn .ulvl{position:absolute;top:6px;right:8px;font-size:10px;color:var(--muted)}
+  #store-area{background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:16px;overflow-y:auto;gap:12px}
+  #store-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;width:100%;max-width:460px}
+  .shelf{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px;text-align:center;cursor:pointer;transition:.2s;min-height:72px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;position:relative}
+  .shelf:hover{border-color:var(--accent2);transform:translateY(-1px)}
+  .shelf.empty{border-style:dashed;opacity:.5}
+  .shelf.locked{opacity:.35;cursor:not-allowed}
+  .shelf .icon{font-size:24px}
+  .shelf .sname{font-size:10px;color:var(--muted)}
+  .shelf .sprice{font-size:11px;color:var(--accent2);font-weight:600}
+  .shelf .stock-bar{width:100%;height:3px;background:var(--border);border-radius:2px;margin-top:4px}
+  .shelf .stock-fill{height:100%;border-radius:2px;transition:.3s}
+  #store-footer{width:100%;max-width:460px;display:flex;flex-direction:column;gap:8px}
+  #cashiers-row{display:flex;gap:6px;flex-wrap:wrap}
+  .cashier{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:12px;display:flex;align-items:center;gap:6px}
+  .cashier .dot{width:8px;height:8px;border-radius:50%;background:var(--accent2)}
+  .cashier.idle .dot{background:var(--muted)}
+  #log-panel{background:var(--surface);border-left:1px solid var(--border);padding:12px;overflow-y:auto;display:flex;flex-direction:column;gap:4px}
+  .log-entry{font-size:12px;color:var(--muted);padding:4px 8px;border-radius:6px;background:var(--card);border-left:2px solid var(--border)}
+  .log-entry.sale{border-left-color:var(--accent2);color:var(--text)}
+  .log-entry.event{border-left-color:var(--accent);color:var(--accent)}
+  .log-entry.warn{border-left-color:var(--accent3);color:#f5a7a7}
+  #ticker{background:#0d1821;border-top:1px solid var(--border);padding:5px 16px;font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;display:flex;align-items:center;gap:8px}
+  #ticker-text{animation:scroll 18s linear infinite}
+  @keyframes scroll{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
+  .btn-primary{background:var(--accent);color:#000;border:none;border-radius:8px;padding:8px 16px;font-weight:700;font-size:13px;cursor:pointer;transition:.15s}
+  .btn-primary:hover{opacity:.85}
+  .progress-ring{display:flex;flex-direction:column;gap:4px;width:100%}
+  .progress-label{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
+  .progress-bar{width:100%;height:6px;background:var(--border);border-radius:4px}
+  .progress-fill{height:100%;border-radius:4px;transition:.4s}
+  #notif{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--accent);color:#000;padding:8px 20px;border-radius:20px;font-weight:700;font-size:13px;display:none;z-index:99}
+  .day-badge{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:12px;font-family:'Bebas Neue',sans-serif;letter-spacing:1px;color:var(--accent)}
+</style>
+
+<h2 class="sr-only">Supermarket Tycoon — a browser-based idle/clicker management game</h2>
+
+<div id="notif" id="notif"></div>
+
+<div id="game">
+  <div id="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <span class="logo">🛒 SuperTycoon</span>
+      <span class="day-badge" id="day-badge">DAY 1</span>
+    </div>
+    <div class="stats-row">
+      <div class="stat"><span class="lbl">Cash</span><span class="val" id="cash-val">$500</span></div>
+      <div class="stat"><span class="lbl">Revenue Today</span><span class="val" id="rev-val">$0</span></div>
+      <div class="stat"><span class="lbl">Reputation</span><span class="val" id="rep-val">⭐ 1.0</span></div>
+      <div class="stat"><span class="lbl">Customers</span><span class="val" id="cust-val">0</span></div>
+    </div>
+  </div>
+
+  <div id="main">
+    <div id="sidebar">
+      <div class="section-title">🏪 STORE UPGRADES</div>
+      <button class="upgrade-btn" id="u-shelves" onclick="buyUpgrade('shelves')">
+        <span class="ulvl" id="ulvl-shelves">Lv 0</span>
+        <div class="uname">📦 Add Shelf</div>
+        <div class="udesc">Stock more products</div>
+        <div class="ucost" id="ucost-shelves">$80</div>
+      </button>
+      <button class="upgrade-btn" id="u-cashier" onclick="buyUpgrade('cashier')">
+        <span class="ulvl" id="ulvl-cashier">0 hired</span>
+        <div class="uname">💼 Hire Cashier</div>
+        <div class="udesc">Serve customers faster</div>
+        <div class="ucost" id="ucost-cashier">$150</div>
+      </button>
+      <button class="upgrade-btn" id="u-decor" onclick="buyUpgrade('decor')">
+        <span class="ulvl" id="ulvl-decor">Lv 0</span>
+        <div class="uname">🎨 Decorate Store</div>
+        <div class="udesc">Boosts reputation +0.2</div>
+        <div class="ucost" id="ucost-decor">$200</div>
+      </button>
+      <button class="upgrade-btn" id="u-ad" onclick="buyUpgrade('ad')">
+        <span class="ulvl" id="ulvl-ad">0 campaigns</span>
+        <div class="uname">📢 Run Ad Campaign</div>
+        <div class="udesc">+15 daily customers</div>
+        <div class="ucost" id="ucost-ad">$300</div>
+      </button>
+      <button class="upgrade-btn" id="u-storage" onclick="buyUpgrade('storage')">
+        <span class="ulvl" id="ulvl-storage">Lv 0</span>
+        <div class="uname">🏭 Expand Storage</div>
+        <div class="udesc">Higher max stock</div>
+        <div class="ucost" id="ucost-storage">$250</div>
+      </button>
+
+      <div class="section-title" style="margin-top:8px">🛍️ RESTOCK PRODUCTS</div>
+      <div id="restock-btns"></div>
+
+      <div class="section-title" style="margin-top:8px">📈 TODAY'S PROGRESS</div>
+      <div class="progress-ring" id="progress-area"></div>
+
+      <div style="margin-top:auto;padding-top:12px">
+        <button class="btn-primary" onclick="endDay()" style="width:100%">⏭ End Day</button>
+      </div>
+    </div>
+
+    <div id="store-area">
+      <div id="store-grid"></div>
+      <div id="store-footer">
+        <div class="section-title">👷 CASHIERS ON DUTY</div>
+        <div id="cashiers-row"></div>
+      </div>
+    </div>
+
+    <div id="log-panel">
+      <div class="section-title">📋 ACTIVITY LOG</div>
+    </div>
+  </div>
+
+  <div id="ticker">
+    <span>📡 MARKET FEED:</span>
+    <span id="ticker-text">Banana prices dip 3% · Holiday weekend approaching · New supplier offers bulk discount · Customer reviews trending positive · Competitor store opening nearby · Energy costs up this week</span>
+  </div>
+</div>
+
+<script>
+const PRODUCTS = [
+  {id:'banana',icon:'🍌',name:'Bananas',buy:5,sell:12,restockCost:40},
+  {id:'bread',icon:'🍞',name:'Bread',buy:8,sell:20,restockCost:60},
+  {id:'milk',icon:'🥛',name:'Milk',buy:6,sell:15,restockCost:50},
+  {id:'apple',icon:'🍎',name:'Apples',buy:7,sell:18,restockCost:55},
+  {id:'chips',icon:'🥔',name:'Chips',buy:10,sell:25,restockCost:70},
+  {id:'water',icon:'💧',name:'Water',buy:3,sell:8,restockCost:30},
+  {id:'eggs',icon:'🥚',name:'Eggs',buy:9,sell:22,restockCost:65},
+  {id:'juice',icon:'🧃',name:'Juice',buy:12,sell:28,restockCost:80},
+  {id:'cheese',icon:'🧀',name:'Cheese',buy:15,sell:35,restockCost:90},
+  {id:'soda',icon:'🥤',name:'Soda',buy:8,sell:20,restockCost:60},
+];
+
+let G = {
+  cash: 500, revenue: 0, day: 1, rep: 1.0,
+  totalCustomers: 0, todayCustomers: 0,
+  shelves: [], cashiers: 0,
+  upgrades:{decor:0,ad:0,storage:0},
+  maxShelves: 5, maxStock: 30,
+  logs: [],
+  ticker: 0,
+  gameInterval: null,
+};
+
+const UPGRADES_CFG = {
+  shelves:  {baseCost:80,  costMult:1.4},
+  cashier:  {baseCost:150, costMult:1.6},
+  decor:    {baseCost:200, costMult:1.8},
+  ad:       {baseCost:300, costMult:1.5},
+  storage:  {baseCost:250, costMult:1.7},
+};
+
+function upgradeCost(key) {
+  const cfg = UPGRADES_CFG[key];
+  let lvl = key==='cashier'?G.cashiers:key==='shelves'?G.shelves.length:G.upgrades[key];
+  return Math.round(cfg.baseCost * Math.pow(cfg.costMult, lvl));
+}
+
+function buyUpgrade(key) {
+  const cost = upgradeCost(key);
+  if(G.cash < cost){notif('💸 Not enough cash!','warn');return;}
+  G.cash -= cost;
+  if(key==='shelves'){
+    if(G.shelves.length>=G.maxShelves){notif('🏗 Expand storage first!','warn');return;}
+    const p = PRODUCTS[G.shelves.length % PRODUCTS.length];
+    G.shelves.push({...p, stock:0, maxStock:G.maxStock});
+    log(`New shelf: ${p.icon} ${p.name}`, 'event');
+    notif(`${p.icon} New shelf added!`);
+  } else if(key==='cashier'){
+    G.cashiers++;
+    log(`👔 Hired cashier #${G.cashiers}`, 'event');
+    notif('💼 New cashier hired!');
+  } else if(key==='decor'){
+    G.upgrades.decor++;
+    G.rep = Math.min(5.0, G.rep + 0.2);
+    log('🎨 Store decorated — reputation up!','event');
+    notif('⭐ Reputation increased!');
+  } else if(key==='ad'){
+    G.upgrades.ad++;
+    log(`📢 Ad campaign launched! +15 customers/day`,'event');
+    notif('📢 Ad campaign running!');
+  } else if(key==='storage'){
+    G.upgrades.storage++;
+    G.maxShelves = 5 + G.upgrades.storage * 5;
+    G.maxStock = 30 + G.upgrades.storage * 15;
+    G.shelves.forEach(s=>s.maxStock=G.maxStock);
+    log(`🏭 Storage expanded to ${G.maxShelves} shelves`,'event');
+    notif('🏭 Storage expanded!');
+  }
+  updateUI();
+}
+
+function restock(idx) {
+  const s = G.shelves[idx];
+  if(!s) return;
+  const needed = s.maxStock - s.stock;
+  const cost = Math.ceil(needed * s.buy / 3);
+  if(G.cash < cost){notif('💸 Not enough cash!','warn');return;}
+  G.cash -= cost;
+  s.stock = s.maxStock;
+  log(`Restocked ${s.icon} ${s.name} (${s.maxStock} units)`, 'sale');
+  notif(`${s.icon} Restocked!`);
+  updateUI();
+}
+
+function simulate() {
+  if(G.shelves.length===0||G.cashiers===0) return;
+  const baseCust = 5 + G.upgrades.ad * 15;
+  const repMult = G.rep / 2;
+  const cashierCap = G.cashiers * 3;
+  const custCount = Math.min(cashierCap, Math.round((baseCust + Math.random()*8) * repMult));
+  let earned = 0;
+  let served = 0;
+  for(let i=0;i<custCount;i++){
+    const stocked = G.shelves.filter(s=>s.stock>0);
+    if(stocked.length===0) break;
+    const shelf = stocked[Math.floor(Math.random()*stocked.length)];
+    shelf.stock--;
+    const price = shelf.sell;
+    earned += price;
+    served++;
+  }
+  if(earned>0){
+    G.cash += earned;
+    G.revenue += earned;
+    G.todayCustomers += served;
+    G.totalCustomers += served;
+    log(`${served} customers — earned $${earned}`, 'sale');
+  }
+  if(Math.random()<0.06) randomEvent();
+  updateUI();
+}
+
+function randomEvent() {
+  const events = [
+    {msg:'🎉 Holiday rush! Doubled customers for next tick!', effect:()=>{G.upgrades.ad = Math.max(0,G.upgrades.ad);}},
+    {msg:'🐛 Health inspection passed! Rep +0.1', effect:()=>{G.rep=Math.min(5,G.rep+0.1);}},
+    {msg:'⚡ Power outage! Lost $50', effect:()=>{G.cash=Math.max(0,G.cash-50);}},
+    {msg:'🌧 Rainy day — extra foot traffic +20%', effect:()=>{}},
+    {msg:'🔥 Product went viral! Sales spike!', effect:()=>{G.revenue+=100;G.cash+=100;}},
+  ];
+  const ev = events[Math.floor(Math.random()*events.length)];
+  ev.effect();
+  log(ev.msg, 'event');
+  notif(ev.msg, 'event');
+}
+
+function endDay() {
+  clearInterval(G.gameInterval);
+  const bonus = Math.floor(G.revenue * 0.05);
+  G.cash += bonus;
+  log(`📅 Day ${G.day} ended. Revenue: $${G.revenue}. Bonus: $${bonus}`, 'event');
+  G.day++;
+  G.revenue = 0;
+  G.todayCustomers = 0;
+  notif(`🌅 Day ${G.day} begins!`);
+  setTimeout(()=>startDay(), 400);
+  updateUI();
+}
+
+function startDay() {
+  G.gameInterval = setInterval(simulate, 2200);
+  updateUI();
+}
+
+function log(msg, type='') {
+  const el = document.createElement('div');
+  el.className = 'log-entry ' + type;
+  el.textContent = msg;
+  const panel = document.getElementById('log-panel');
+  panel.insertBefore(el, panel.children[1]);
+  if(panel.children.length > 22) panel.lastChild.remove();
+  G.logs.unshift({msg,type});
+  if(G.logs.length>20) G.logs.pop();
+}
+
+let notifTimer;
+function notif(msg, type) {
+  const el = document.getElementById('notif');
+  el.textContent = msg;
+  el.style.display='block';
+  el.style.background = type==='warn' ? '#e74c3c' : '#f5c518';
+  el.style.color = type==='warn' ? '#fff' : '#000';
+  clearTimeout(notifTimer);
+  notifTimer = setTimeout(()=>el.style.display='none', 1800);
+}
+
+function updateUI() {
+  document.getElementById('cash-val').textContent = '$'+G.cash.toLocaleString();
+  document.getElementById('rev-val').textContent = '$'+G.revenue.toLocaleString();
+  document.getElementById('rep-val').textContent = '⭐ '+G.rep.toFixed(1);
+  document.getElementById('cust-val').textContent = G.totalCustomers.toLocaleString();
+  document.getElementById('day-badge').textContent = 'DAY ' + G.day;
+
+  ['shelves','cashier','decor','ad','storage'].forEach(k=>{
+    const cost = upgradeCost(k);
+    const btn = document.getElementById('u-'+k);
+    const costEl = document.getElementById('ucost-'+k);
+    const lvlEl = document.getElementById('ulvl-'+k);
+    if(costEl) costEl.textContent = '$'+cost.toLocaleString();
+    if(btn) btn.classList.toggle('cant-afford', G.cash<cost);
+    if(lvlEl){
+      if(k==='cashier') lvlEl.textContent = G.cashiers+' hired';
+      else if(k==='shelves') lvlEl.textContent = 'Lv '+G.shelves.length;
+      else if(k==='ad') lvlEl.textContent = G.upgrades.ad+' campaigns';
+      else lvlEl.textContent = 'Lv '+(G.upgrades[k]||0);
+    }
+  });
+
+  const grid = document.getElementById('store-grid');
+  grid.innerHTML='';
+  for(let i=0;i<G.maxShelves;i++){
+    const shelf = G.shelves[i];
+    const div = document.createElement('div');
+    if(!shelf){
+      div.className = i<G.maxShelves ? 'shelf empty' : 'shelf locked';
+      div.innerHTML = `<span class="icon">📦</span><span class="sname">Empty</span>`;
+    } else {
+      const pct = shelf.stock/shelf.maxStock;
+      const fillColor = pct>0.5?'#2ecc71':pct>0.2?'#f5c518':'#e74c3c';
+      div.className='shelf';
+      div.title='Click to restock';
+      div.onclick=()=>restock(i);
+      div.innerHTML=`<span class="icon">${shelf.icon}</span><span class="sname">${shelf.name}</span><span class="sprice">$${shelf.sell}</span><div class="stock-bar"><div class="stock-fill" style="width:${Math.round(pct*100)}%;background:${fillColor}"></div></div><span style="font-size:10px;color:var(--muted)">${shelf.stock}/${shelf.maxStock}</span>`;
+    }
+    grid.appendChild(div);
+  }
+
+  const cRow = document.getElementById('cashiers-row');
+  cRow.innerHTML='';
+  if(G.cashiers===0){
+    cRow.innerHTML='<span style="font-size:12px;color:var(--muted)">No cashiers hired yet</span>';
+  } else {
+    for(let i=0;i<G.cashiers;i++){
+      const d=document.createElement('div');
+      d.className='cashier';
+      d.innerHTML=`<div class="dot"></div><span>Cashier #${i+1}</span>`;
+      cRow.appendChild(d);
+    }
+  }
+
+  const rArea = document.getElementById('restock-btns');
+  rArea.innerHTML='';
+  G.shelves.forEach((s,i)=>{
+    if(s.stock<s.maxStock){
+      const needed=s.maxStock-s.stock;
+      const cost=Math.ceil(needed*s.buy/3);
+      const b=document.createElement('button');
+      b.className='upgrade-btn'+(G.cash<cost?' cant-afford':'');
+      b.onclick=()=>restock(i);
+      b.innerHTML=`<div class="uname">${s.icon} Restock ${s.name}</div><div class="ucost">$${cost}</div>`;
+      rArea.appendChild(b);
+    }
+  });
+  if(rArea.innerHTML==='') rArea.innerHTML='<span style="font-size:11px;color:var(--muted)">All shelves fully stocked!</span>';
+
+  const pArea = document.getElementById('progress-area');
+  pArea.innerHTML='';
+  const goals=[
+    {label:'Daily Revenue',cur:G.revenue,goal:500},
+    {label:'Reputation',cur:G.rep,goal:5.0},
+    {label:'Customers',cur:G.todayCustomers,goal:50},
+  ];
+  goals.forEach(g=>{
+    const pct=Math.min(100,Math.round(g.cur/g.goal*100));
+    const color=pct>=100?'#2ecc71':pct>50?'#f5c518':'#e74c3c';
+    pArea.innerHTML+=`<div class="progress-ring"><div class="progress-label"><span>${g.label}</span><span>${pct}%</span></div><div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${color}"></div></div></div>`;
+  });
+}
+
+log('🏪 Welcome to SuperTycoon! Buy a shelf & hire a cashier to begin.', 'event');
+updateUI();
+startDay();
+</script>
