@@ -1,114 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Supermarket Tycoon</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Supermarket Tycoon</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="game-container">
-        <header class="game-header">
-            <div class="brand-section">
-                <h1 id="market-name" contenteditable="true" title="Click to rename your market">MegaMart Express</h1>
-                <span class="version">v1.0.0</span>
-            </div>
-            <div class="stats-board">
-                <div class="stat-card cash-card">
-                    <span class="stat-label">Cash Balance</span>
-                    <span id="cash-display" class="stat-value">$0</span>
-                </div>
-                <div class="stat-card income-card">
-                    <span class="stat-label">Income Rate</span>
-                    <span id="pps-display" class="stat-value">$0.00/sec</span>
-                </div>
-                <div class="stat-card prestige-card">
-                    <span class="stat-label">Corporate Shares</span>
-                    <span id="shares-display" class="stat-value">0 (0% Boost)</span>
-                </div>
-            </div>
-        </header>
-
-        <main class="game-layout">
-            <section class="store-floor">
-                <div class="checkout-area">
-                    <button id="click-btn" class="main-click-button">
-                        <div class="click-content">
-                            <span class="click-icon">🛒</span>
-                            <span class="click-title">Ring Up Customer</span>
-                            <span id="click-value-display" class="click-subtitle">+$1.00</span>
-                        </div>
-                    </button>
-                </div>
-                
-                <div class="floor-displays">
-                    <h3>Live Department Operations</h3>
-                    <div id="aisle-monitors" class="monitors-grid">
-                        </div>
-                </div>
-            </section>
-
-            <section class="management-dashboard">
-                <nav class="tab-navigation">
-                    <button class="tab-btn active" data-tab="aisles">Aisles</button>
-                    <button class="tab-btn" data-tab="staff">Staff</button>
-                    <button class="tab-btn" data-tab="upgrades">Upgrades</button>
-                    <button class="tab-btn" data-tab="corporate">Corporate</button>
-                </nav>
-
-                <div class="tab-content-container">
-                    <div id="tab-aisles" class="tab-panel active">
-                        <div class="panel-header">
-                            <h2>Expand Departments</h2>
-                            <p>Unlock and scale physical store sections to increase baseline output.</p>
-                        </div>
-                        <div id="aisles-list" class="card-list"></div>
-                    </div>
-
-                    <div id="tab-staff" class="tab-panel">
-                        <div class="panel-header">
-                            <h2>Hire Personnel</h2>
-                            <p>Recruit cashiers and specialized managers to boost department revenue streams.</p>
-                        </div>
-                        <div id="staff-list" class="card-list"></div>
-                    </div>
-
-                    <div id="tab-upgrades" class="tab-panel">
-                        <div class="panel-header">
-                            <h2>Infrastructure Upgrades</h2>
-                            <p>Invest in supply chain logistics and technology for global revenue multipliers.</p>
-                        </div>
-                        <div id="upgrades-list" class="card-list"></div>
-                    </div>
-
-                    <div id="tab-corporate" class="tab-panel">
-                        <div class="panel-header">
-                            <h2>Corporate Headquarters</h2>
-                            <p>Liquidate current physical properties into corporate equity shares to trigger massive global revenue multipliers.</p>
-                        </div>
-                        <div class="prestige-box">
-                            <div class="prestige-stats">
-                                <div class="p-stat"><span>Lifetime Valuation:</span> <strong id="lifetime-cash">$0</strong></div>
-                                <div class="p-stat"><span>Pending Shares:</span> <strong id="pending-shares">0</strong></div>
-                                <div class="p-stat"><span>Next Share At:</span> <strong id="next-share-cost">$0</strong></div>
-                            </div>
-                            <button id="prestige-btn" class="prestige-button" disabled>
-                                Liquidate Assets & Claim Shares
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
-
-        <footer class="game-footer">
-            <div class="footer-status"><span id="autosave-status">System Operational</span></div>
-            <div class="footer-actions">
-                <button id="save-btn" class="sys-btn">Manual Save</button>
-                <button id="reset-btn" class="sys-btn danger">Hard Reset</button>
-            </div>
-        </footer>
+  <h1>Supermarket Tycoon: Build Your Retail Empire</h1>
+  <div id="game">
+    <div id="store"></div>
+    <div id="ui">
+      <p>Money: $<span id="money">100</span></p>
+      <button onclick="buyShelf()">Buy Shelf ($50)</button>
+      <button onclick="stockShelf()">Stock Shelf ($20)</button>
+      <button onclick="spawnCustomer()">Spawn Customer</button>
     </div>
-    <script src="script.js"></script>
+  </div>
+  <script src="script.js"></script>
 </body>
 </html>
