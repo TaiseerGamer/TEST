@@ -1,35 +1,584 @@
-body {
-  font-family: Arial, sans-serif;
-  background: #f4f4f4;
-  text-align: center;
+/* =========================
+   BURGER EMPIRE
+   STYLE.CSS
+========================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Segoe UI,Tahoma,Geneva,Verdana,sans-serif;
 }
 
-#game {
-  display: flex;
-  justify-content: space-around;
-  margin-top: 20px;
+body{
+    background:linear-gradient(
+        135deg,
+        #ffb347,
+        #ffcc33
+    );
+
+    min-height:100vh;
+    color:#222;
 }
 
-#store {
-  width: 400px;
-  height: 400px;
-  background: #fff;
-  border: 2px solid #333;
-  position: relative;
+#game{
+    padding:15px;
 }
 
-.shelf {
-  width: 80px;
-  height: 40px;
-  background: #c2a679;
-  border: 1px solid #000;
-  margin: 5px;
+/* =========================
+   TOP BAR
+========================= */
+
+#topBar{
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+
+    background:white;
+
+    border-radius:15px;
+
+    padding:15px;
+
+    margin-bottom:15px;
+
+    box-shadow:
+        0 5px 15px rgba(0,0,0,.15);
 }
 
-.customer {
-  width: 30px;
-  height: 30px;
-  background: #4caf50;
-  border-radius: 50%;
-  position: absolute;
+.stat{
+    font-weight:700;
+    font-size:18px;
+}
+
+.combo{
+    color:#ff5e00;
+}
+
+/* =========================
+   XP BAR
+========================= */
+
+#xpContainer{
+    width:100%;
+    height:24px;
+
+    background:#ddd;
+
+    border-radius:999px;
+
+    overflow:hidden;
+
+    margin-bottom:20px;
+}
+
+#xpBar{
+    width:0%;
+
+    height:100%;
+
+    background:linear-gradient(
+        90deg,
+        #00d2ff,
+        #3a7bd5
+    );
+
+    transition:.4s;
+}
+
+/* =========================
+   MAIN
+========================= */
+
+main{
+    display:grid;
+
+    grid-template-columns:
+        1fr
+        1.2fr
+        1fr;
+
+    gap:20px;
+}
+
+/* =========================
+   PANELS
+========================= */
+
+section{
+    background:white;
+
+    border-radius:16px;
+
+    padding:15px;
+
+    box-shadow:
+        0 4px 12px rgba(0,0,0,.12);
+}
+
+section h2{
+    margin-bottom:15px;
+}
+
+/* =========================
+   CUSTOMERS
+========================= */
+
+#customers{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.customer{
+    background:#fff7ec;
+
+    border:2px solid #ffc36a;
+
+    border-radius:15px;
+
+    padding:12px;
+
+    animation:popIn .3s ease;
+}
+
+.customer.vip{
+    border-color:gold;
+    background:#fff9d4;
+}
+
+.customer.speed{
+    border-color:#ff5e5e;
+}
+
+.customer.critic{
+    border-color:#6d5cff;
+}
+
+.customerName{
+    font-weight:bold;
+    margin-bottom:8px;
+}
+
+.orderText{
+    font-size:14px;
+    margin-bottom:10px;
+}
+
+.patienceBar{
+    height:14px;
+
+    background:#ddd;
+
+    border-radius:999px;
+
+    overflow:hidden;
+}
+
+.patienceFill{
+    width:100%;
+    height:100%;
+
+    background:
+    linear-gradient(
+        90deg,
+        limegreen,
+        orange,
+        red
+    );
+}
+
+/* =========================
+   GRILL
+========================= */
+
+#grillArea{
+    margin-bottom:20px;
+}
+
+#grillSlots{
+    display:grid;
+
+    grid-template-columns:
+    repeat(2,1fr);
+
+    gap:15px;
+}
+
+.grill-slot{
+    background:#2e2e2e;
+
+    min-height:120px;
+
+    border-radius:15px;
+
+    border:3px solid #444;
+
+    position:relative;
+}
+
+.grill-slot::before{
+    content:"🔥";
+
+    position:absolute;
+
+    top:8px;
+    right:10px;
+
+    font-size:24px;
+}
+
+.patty{
+    position:absolute;
+
+    left:50%;
+    top:50%;
+
+    transform:
+    translate(-50%,-50%);
+
+    width:80px;
+    height:80px;
+
+    border-radius:50%;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    color:white;
+    font-weight:bold;
+}
+
+.raw{
+    background:#d9534f;
+}
+
+.cooking{
+    background:#ff9800;
+}
+
+.perfect{
+    background:#4caf50;
+}
+
+.burnt{
+    background:#111;
+}
+
+/* =========================
+   ASSEMBLY
+========================= */
+
+#assemblyArea{
+    margin-top:10px;
+}
+
+#burgerStack{
+    min-height:250px;
+
+    border:3px dashed #bbb;
+
+    border-radius:15px;
+
+    background:#fafafa;
+
+    padding:10px;
+
+    display:flex;
+    flex-direction:column-reverse;
+
+    align-items:center;
+    gap:6px;
+}
+
+.placeholder{
+    color:#999;
+}
+
+.stackItem{
+    width:80%;
+
+    background:#ffe2ad;
+
+    border-radius:8px;
+
+    text-align:center;
+
+    padding:8px;
+
+    animation:dropIn .2s ease;
+}
+
+#assemblyButtons{
+    display:flex;
+
+    gap:10px;
+
+    margin-top:15px;
+}
+
+#assemblyButtons button{
+    flex:1;
+}
+
+/* =========================
+   INGREDIENTS
+========================= */
+
+#ingredientGrid{
+    display:grid;
+
+    grid-template-columns:
+    repeat(2,1fr);
+
+    gap:10px;
+}
+
+.ingredient{
+    background:#fff2d5;
+
+    border:2px solid #ffcb70;
+
+    border-radius:12px;
+
+    padding:10px;
+
+    cursor:grab;
+
+    text-align:center;
+
+    transition:.2s;
+}
+
+.ingredient:hover{
+    transform:scale(1.05);
+}
+
+.ingredient:active{
+    cursor:grabbing;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+button{
+    border:none;
+
+    padding:12px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    font-weight:bold;
+
+    transition:.2s;
+}
+
+button:hover{
+    transform:translateY(-2px);
+}
+
+#serveBurger{
+    background:#4caf50;
+    color:white;
+}
+
+#clearBurger{
+    background:#f44336;
+    color:white;
+}
+
+.upgradeBtn{
+    background:#ff9800;
+    color:white;
+}
+
+/* =========================
+   UPGRADE GRID
+========================= */
+
+.upgradeGrid{
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(150px,1fr));
+
+    gap:10px;
+}
+
+/* =========================
+   CHALLENGES
+========================= */
+
+#challengeText{
+    font-size:18px;
+    font-weight:bold;
+}
+
+#challengeProgress{
+    margin-top:10px;
+}
+
+/* =========================
+   ACHIEVEMENTS
+========================= */
+
+#achievementList{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.achievement{
+    background:#e9ffe9;
+
+    border-radius:10px;
+
+    padding:10px;
+}
+
+.locked{
+    background:#ddd;
+    opacity:.7;
+}
+
+/* =========================
+   FLOATING POPUPS
+========================= */
+
+#floatingContainer{
+    position:fixed;
+
+    inset:0;
+
+    pointer-events:none;
+}
+
+.popup{
+    position:absolute;
+
+    font-size:22px;
+
+    font-weight:bold;
+
+    animation:
+    floatUp 1.5s forwards;
+}
+
+/* =========================
+   SAVE INDICATOR
+========================= */
+
+#saveIndicator{
+    position:fixed;
+
+    bottom:20px;
+    right:20px;
+
+    background:#4caf50;
+
+    color:white;
+
+    padding:10px 15px;
+
+    border-radius:10px;
+
+    opacity:0;
+
+    transition:.4s;
+}
+
+#saveIndicator.show{
+    opacity:1;
+}
+
+/* =========================
+   DAY NIGHT
+========================= */
+
+body.night{
+    background:
+    linear-gradient(
+    135deg,
+    #0f172a,
+    #1e293b
+    );
+
+    color:white;
+}
+
+body.night section{
+    background:#1f2937;
+}
+
+/* =========================
+   ANIMATIONS
+========================= */
+
+@keyframes popIn{
+    from{
+        transform:scale(.8);
+        opacity:0;
+    }
+    to{
+        transform:scale(1);
+        opacity:1;
+    }
+}
+
+@keyframes dropIn{
+    from{
+        transform:translateY(-20px);
+        opacity:0;
+    }
+    to{
+        transform:translateY(0);
+        opacity:1;
+    }
+}
+
+@keyframes floatUp{
+    from{
+        opacity:1;
+        transform:translateY(0);
+    }
+
+    to{
+        opacity:0;
+        transform:translateY(-100px);
+    }
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:1000px){
+
+    main{
+        grid-template-columns:1fr;
+    }
+
+    #ingredientGrid{
+        grid-template-columns:
+        repeat(3,1fr);
+    }
+
+}
+
+@media(max-width:600px){
+
+    .stat{
+        font-size:15px;
+    }
+
+    #ingredientGrid{
+        grid-template-columns:
+        repeat(2,1fr);
+    }
+
 }
