@@ -135,7 +135,19 @@ function updateUI() {
 
 /* ---------- GAME LOOP ---------- */
 
-setInterval(spawnCustomer, 3500);
-setInterval(updatePatience, 1000);
+function spawnCustomer() {
+  if (customers.length >= maxCustomers) return;
+
+  const customer = {
+    id: Date.now() + Math.random(),
+    order: recipes[Math.floor(Math.random() * recipes.length)],
+    patience: 100
+  };
+
+  customers.push(customer);
+  renderCustomers();
+}; // spawn one immediately so game is not empty
+setInterval(spawnCustomer, 3500)
+;setInterval(updatePatience, 1000);
 
 updateUI();
