@@ -2,326 +2,50 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Burger Empire</title>
-
+<title>Café Cooking Simulator</title>
 <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
+
+<div id="topBar">
+  <div>Coins: <span id="coins">0</span></div>
+  <div>Level: <span id="level">1</span></div>
+  <div>XP: <span id="xp">0</span></div>
+</div>
 
 <div id="game">
 
-    <!-- TOP BAR -->
-    <header id="topBar">
+  <div id="customers"></div>
 
-        <div class="stat">
-            💰 Coins:
-            <span id="coins">0</span>
-        </div>
+  <div id="kitchen">
+    <h3>🍳 Cooking Station</h3>
 
-        <div class="stat">
-            ⭐ XP:
-            <span id="xp">0</span>
-        </div>
-
-        <div class="stat">
-            🏆 Level:
-            <span id="level">1</span>
-        </div>
-
-        <div class="stat">
-            ❤️ Reputation:
-            <span id="reputation">50</span>
-        </div>
-
-        <div class="stat combo">
-            🔥 Combo:
-            <span id="combo">x1</span>
-        </div>
-
-    </header>
-
-    <!-- LEVEL BAR -->
-
-    <div id="xpContainer">
-        <div id="xpBar"></div>
+    <div class="buttonGrid">
+      <button onclick="addIngredient('Coffee')">☕ Coffee</button>
+      <button onclick="addIngredient('Burger')">🍔 Burger</button>
+      <button onclick="addIngredient('Sandwich')">🥪 Sandwich</button>
+      <button onclick="addIngredient('Pizza')">🍕 Pizza</button>
+      <button onclick="addIngredient('Juice')">🧃 Juice</button>
+      <button onclick="serveOrder()">Serve</button>
     </div>
 
-    <!-- MAIN CONTENT -->
-
-    <main>
-
-        <!-- LEFT PANEL -->
-
-        <section id="customerSection">
-
-            <h2>Customers</h2>
-
-            <div id="customers">
-
-            </div>
-
-        </section>
-
-        <!-- CENTER -->
-
-        <section id="kitchenSection">
-
-            <h2>Kitchen</h2>
-
-            <!-- GRILL -->
-
-            <div id="grillArea">
-
-                <h3>Grill Station</h3>
-
-                <div id="grillSlots">
-
-                    <div class="grill-slot" data-slot="0"></div>
-                    <div class="grill-slot" data-slot="1"></div>
-                    <div class="grill-slot" data-slot="2"></div>
-                    <div class="grill-slot" data-slot="3"></div>
-
-                </div>
-
-            </div>
-
-            <!-- ASSEMBLY -->
-
-            <div id="assemblyArea">
-
-                <h3>Assembly Station</h3>
-
-                <div id="burgerStack">
-
-                    <p class="placeholder">
-                        Drag ingredients here
-                    </p>
-
-                </div>
-
-                <div id="assemblyButtons">
-
-                    <button id="clearBurger">
-                        Clear Burger
-                    </button>
-
-                    <button id="serveBurger">
-                        Serve Customer
-                    </button>
-
-                </div>
-
-            </div>
-
-        </section>
-
-        <!-- RIGHT PANEL -->
-
-        <section id="ingredientSection">
-
-            <h2>Ingredients</h2>
-
-            <div id="ingredientGrid">
-
-                <!-- BUNS -->
-
-                <div class="ingredient"
-                     draggable="true"
-                     data-name="Burger Bun">
-                    🍔 Bun
-                </div>
-
-                <div class="ingredient"
-                     draggable="true"
-                     data-name="Sesame Bun">
-                    🥯 Sesame Bun
-                </div>
-
-                <!-- PATTIES -->
-
-                <div class="ingredient"
-                     draggable="true"
-                     data-name="Beef Patty">
-                    🥩 Beef Patty
-                </div>
-
-                <div class="ingredient"
-                     draggable="true"
-                     data-name="Chicken Patty">
-                    🍗 Chicken Patty
-                </div>
-
-                <div class="ingredient"
-                     draggable="true"
-                     data-name="Veggie Patty">
-                    🥬 Veggie Patty
-                </div>
-
-                <!-- TOPPINGS -->
-
-                <div class="ingredient"
-                     draggable="true"
-                     data-name="Cheese">
-                    🧀 Cheese
-                </div>
-
-                <div class="ingredient"
-                     draggable="true"
-                     data-name="Lettuce">
-                    🥬 Lettuce
-                </div>
-
-                <div class="ingredient"
-                     draggable="true"
-                     data-name="Tomato">
-                    🍅 Tomato
-                </div>
-
-                <div class="ingredient"
-                     draggable="true"
-                     data-name="Onion">
-                    🧅 Onion
-                </div>
-
-                <div class="ingredient"
-                     draggable="true"
-                     data-name="Pickles">
-                    🥒 Pickles
-                </div>
-
-                <div class="ingredient"
-                     draggable="true"
-                     data-name="Bacon">
-                    🥓 Bacon
-                </div>
-
-                <div class="ingredient"
-                     draggable="true"
-                     data-name="Mushroom">
-                    🍄 Mushroom
-                </div>
-
-                <div class="ingredient"
-                     draggable="true"
-                     data-name="Egg">
-                    🍳 Egg
-                </div>
-
-                <!-- SAUCES -->
-
-                <div class="ingredient"
-                     draggable="true"
-                     data-name="BBQ Sauce">
-                    🟤 BBQ
-                </div>
-
-                <div class="ingredient"
-                     draggable="true"
-                     data-name="Ketchup">
-                    🔴 Ketchup
-                </div>
-
-                <div class="ingredient"
-                     draggable="true"
-                     data-name="Mustard">
-                    🟡 Mustard
-                </div>
-
-                <div class="ingredient"
-                     draggable="true"
-                     data-name="Special Sauce">
-                    ✨ Special
-                </div>
-
-            </div>
-
-        </section>
-
-    </main>
-
-    <!-- UPGRADES -->
-
-    <section id="upgradeSection">
-
-        <h2>Upgrades</h2>
-
-        <div class="upgradeGrid">
-
-            <button class="upgradeBtn"
-                    id="upgradeGrill">
-                Faster Grill
-            </button>
-
-            <button class="upgradeBtn"
-                    id="upgradeSpawn">
-                More Customers
-            </button>
-
-            <button class="upgradeBtn"
-                    id="upgradeRep">
-                Reputation Boost
-            </button>
-
-        </div>
-
-    </section>
-
-    <!-- DAILY CHALLENGE -->
-
-    <section id="challengeSection">
-
-        <h2>Daily Challenge</h2>
-
-        <div id="challengeText">
-            Serve 5 Burgers
-        </div>
-
-        <div id="challengeProgress">
-            0 / 5
-        </div>
-
-    </section>
-
-    <!-- ACHIEVEMENTS -->
-
-    <section id="achievementSection">
-
-        <h2>Achievements</h2>
-
-        <div id="achievementList">
-
-            <div class="achievement">
-                🍔 First Burger
-            </div>
-
-            <div class="achievement locked">
-                👨‍🍳 Master Chef
-            </div>
-
-            <div class="achievement locked">
-                🔥 Grill Expert
-            </div>
-
-        </div>
-
-    </section>
+    <div id="currentOrder">
+      <h4>Current Order:</h4>
+      <div id="orderText">None</div>
+    </div>
+  </div>
+
+  <div id="rightPanel">
+    <h3>⬆ Upgrades</h3>
+
+    <div class="upgrade" onclick="upgrade('speed')">Speed (50💰)</div>
+    <div class="upgrade" onclick="upgrade('tips')">Tips (75💰)</div>
+    <div class="upgrade" onclick="upgrade('capacity')">Capacity (100💰)</div>
+
+  </div>
 
 </div>
 
-<!-- POPUPS -->
-
-<div id="floatingContainer"></div>
-
-<!-- SAVE MESSAGE -->
-
-<div id="saveIndicator">
-    Game Saved
-</div>
-
-<script src="script.js"></script>
-
+<script src="game.js"></script>
 </body>
 </html>
