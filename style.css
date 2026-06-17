@@ -1,30 +1,571 @@
-body {
-    font-family: Arial, sans-serif;
-    background: #ffe6b3;
-    text-align: center;
+/* =========================
+   Burger Cooking Simulator
+   v0.1.0
+========================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
 }
 
-h1 {
-    color: #8b4513;
+:root{
+    --bg:#fff7e8;
+    --panel:#ffffff;
+    --accent:#ff9f1c;
+    --accent-dark:#ff7b00;
+    --green:#4caf50;
+    --red:#e53935;
+    --blue:#2196f3;
+    --text:#222;
+    --shadow:0 6px 18px rgba(0,0,0,.12);
+    --radius:16px;
 }
 
-.order-box,
-.kitchen,
-.burger {
-    background: white;
-    padding: 15px;
-    margin: 15px auto;
-    width: 400px;
-    border-radius: 10px;
+body{
+    background:linear-gradient(180deg,#fff8ec,#ffe6c7);
+    color:var(--text);
+    min-height:100vh;
+    overflow-x:hidden;
 }
 
-button {
-    padding: 10px;
-    margin: 5px;
-    cursor: pointer;
+.hidden{
+    display:none !important;
 }
 
-ul {
-    list-style: none;
-    padding: 0;
+/* =========================
+   MAIN MENU
+========================= */
+
+.menu-screen{
+    width:100%;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:
+    radial-gradient(circle at top,#ffd36d,#ffb347 40%,#ff9f1c);
+}
+
+.menu-container{
+    background:white;
+    padding:40px;
+    width:420px;
+    max-width:95%;
+    border-radius:24px;
+    text-align:center;
+    box-shadow:var(--shadow);
+    animation:menuFloat 3s ease-in-out infinite;
+}
+
+@keyframes menuFloat{
+    0%,100%{
+        transform:translateY(0px);
+    }
+    50%{
+        transform:translateY(-8px);
+    }
+}
+
+.menu-container h1{
+    font-size:42px;
+    margin-bottom:10px;
+}
+
+.version{
+    color:#777;
+    margin-bottom:30px;
+}
+
+.menu-container button{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    margin:8px 0;
+    cursor:pointer;
+    font-size:18px;
+    background:var(--accent);
+    color:white;
+    transition:.25s;
+}
+
+.menu-container button:hover{
+    background:var(--accent-dark);
+    transform:translateY(-2px);
+}
+
+/* =========================
+   TOP BAR
+========================= */
+
+#topBar{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    padding:12px;
+    background:white;
+    box-shadow:var(--shadow);
+    position:sticky;
+    top:0;
+    z-index:100;
+}
+
+.stat-box{
+    flex:1;
+    min-width:120px;
+    background:#fff6e8;
+    padding:12px;
+    border-radius:14px;
+    text-align:center;
+}
+
+.stat-box span{
+    display:block;
+    font-size:13px;
+    color:#666;
+}
+
+.stat-box strong{
+    font-size:20px;
+}
+
+/* =========================
+   XP BAR
+========================= */
+
+#xpContainer{
+    width:100%;
+    height:24px;
+    background:#ddd;
+    overflow:hidden;
+}
+
+#xpBar{
+    width:0%;
+    height:100%;
+    background:linear-gradient(90deg,#42a5f5,#1976d2);
+    transition:.3s;
+}
+
+/* =========================
+   GAME LAYOUT
+========================= */
+
+#gameLayout{
+    display:grid;
+    grid-template-columns:280px 1fr 280px;
+    gap:20px;
+    padding:20px;
+}
+
+/* =========================
+   PANELS
+========================= */
+
+#customerPanel,
+#centerArea,
+#ingredientPanel,
+#assemblySection,
+#upgradeSection,
+#statsSection,
+#dayPanel{
+    background:white;
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+}
+
+#customerPanel,
+#centerArea,
+#ingredientPanel{
+    padding:18px;
+}
+
+h2{
+    margin-bottom:16px;
+}
+
+/* =========================
+   CUSTOMERS
+========================= */
+
+#customerQueue{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.customer-card{
+    background:#fff9f1;
+    border-radius:14px;
+    padding:12px;
+    border-left:6px solid var(--accent);
+}
+
+.customer-name{
+    font-weight:bold;
+    margin-bottom:4px;
+}
+
+.customer-order{
+    font-size:14px;
+    margin-bottom:8px;
+}
+
+.patience-bar{
+    width:100%;
+    height:10px;
+    background:#ddd;
+    border-radius:99px;
+    overflow:hidden;
+}
+
+.patience-fill{
+    width:100%;
+    height:100%;
+    background:var(--green);
+}
+
+/* =========================
+   GRILL
+========================= */
+
+#grillArea{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+    gap:15px;
+    margin-bottom:15px;
+}
+
+.grill-slot{
+    background:#2b2b2b;
+    color:white;
+    min-height:160px;
+    border-radius:14px;
+    padding:12px;
+    position:relative;
+    overflow:hidden;
+}
+
+.grill-label{
+    text-align:center;
+    margin-top:50px;
+}
+
+.cook-bar{
+    position:absolute;
+    left:10px;
+    right:10px;
+    bottom:10px;
+    height:12px;
+    background:#444;
+    border-radius:99px;
+    overflow:hidden;
+}
+
+.cook-progress{
+    width:0%;
+    height:100%;
+    background:limegreen;
+}
+
+#addBeefBtn,
+#addChickenBtn{
+    width:100%;
+    border:none;
+    padding:14px;
+    margin-top:10px;
+    border-radius:12px;
+    cursor:pointer;
+    color:white;
+    background:var(--accent);
+}
+
+#addChickenBtn:disabled{
+    background:#aaa;
+    cursor:not-allowed;
+}
+
+/* =========================
+   INGREDIENTS
+========================= */
+
+#ingredientGrid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+}
+
+.ingredient{
+    border:none;
+    padding:12px;
+    cursor:pointer;
+    border-radius:12px;
+    background:#ffe5b4;
+    transition:.2s;
+}
+
+.ingredient:hover{
+    transform:scale(1.03);
+}
+
+.locked{
+    background:#ddd;
+    color:#777;
+}
+
+/* =========================
+   ASSEMBLY
+========================= */
+
+#assemblySection{
+    margin:20px;
+    padding:20px;
+}
+
+#burgerStack{
+    min-height:220px;
+    border:3px dashed #d7d7d7;
+    border-radius:18px;
+    display:flex;
+    flex-direction:column-reverse;
+    justify-content:flex-start;
+    align-items:center;
+    padding:20px;
+    margin-bottom:20px;
+    background:#fffdf8;
+}
+
+.burger-layer{
+    width:180px;
+    padding:8px;
+    margin:2px 0;
+    text-align:center;
+    border-radius:999px;
+    font-weight:bold;
+}
+
+#assemblyButtons{
+    display:flex;
+    gap:10px;
+}
+
+#assemblyButtons button{
+    flex:1;
+    border:none;
+    padding:14px;
+    cursor:pointer;
+    color:white;
+    border-radius:12px;
+}
+
+#clearBurgerBtn{
+    background:var(--red);
+}
+
+#serveBurgerBtn{
+    background:var(--green);
+}
+
+/* =========================
+   DAY PANEL
+========================= */
+
+#dayPanel{
+    margin:20px;
+    padding:20px;
+    display:flex;
+    gap:15px;
+}
+
+.day-card{
+    flex:1;
+    background:#fff4dd;
+    padding:15px;
+    border-radius:12px;
+}
+
+.day-card span{
+    display:block;
+    color:#666;
+}
+
+/* =========================
+   UPGRADES
+========================= */
+
+#upgradeSection{
+    margin:20px;
+    padding:20px;
+}
+
+.upgrade-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:12px;
+}
+
+.upgrade-btn{
+    border:none;
+    padding:16px;
+    border-radius:12px;
+    cursor:pointer;
+    background:#fff1cf;
+    transition:.2s;
+}
+
+.upgrade-btn:hover{
+    transform:translateY(-3px);
+}
+
+/* =========================
+   STATS
+========================= */
+
+#statsSection{
+    margin:20px;
+    padding:20px;
+}
+
+.stats-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:12px;
+}
+
+.stat-card{
+    background:#fff8ec;
+    padding:15px;
+    border-radius:12px;
+}
+
+.stat-card span{
+    display:block;
+    color:#666;
+}
+
+/* =========================
+   NOTIFICATIONS
+========================= */
+
+#notificationContainer{
+    position:fixed;
+    top:20px;
+    right:20px;
+    z-index:9999;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.notification{
+    background:#333;
+    color:white;
+    padding:14px;
+    border-radius:12px;
+    min-width:250px;
+    animation:slideIn .3s ease;
+}
+
+@keyframes slideIn{
+    from{
+        opacity:0;
+        transform:translateX(50px);
+    }
+    to{
+        opacity:1;
+        transform:translateX(0);
+    }
+}
+
+/* =========================
+   ACHIEVEMENT POPUP
+========================= */
+
+#achievementPopup{
+    position:fixed;
+    left:50%;
+    top:30px;
+    transform:translateX(-50%);
+    background:gold;
+    color:#222;
+    padding:20px 30px;
+    border-radius:18px;
+    box-shadow:var(--shadow);
+    display:none;
+    z-index:10000;
+}
+
+#achievementTitle{
+    font-size:22px;
+    font-weight:bold;
+}
+
+#achievementText{
+    margin-top:5px;
+}
+
+/* =========================
+   COMBO EFFECT
+========================= */
+
+.combo-pop{
+    animation:comboPop .35s;
+}
+
+@keyframes comboPop{
+    0%{
+        transform:scale(1);
+    }
+    50%{
+        transform:scale(1.3);
+    }
+    100%{
+        transform:scale(1);
+    }
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:1100px){
+
+    #gameLayout{
+        grid-template-columns:1fr;
+    }
+
+    #customerPanel{
+        order:1;
+    }
+
+    #centerArea{
+        order:2;
+    }
+
+    #ingredientPanel{
+        order:3;
+    }
+
+}
+
+@media(max-width:700px){
+
+    .menu-container h1{
+        font-size:30px;
+    }
+
+    #topBar{
+        flex-direction:column;
+    }
+
+    #assemblyButtons{
+        flex-direction:column;
+    }
+
+    #dayPanel{
+        flex-direction:column;
+    }
+
 }
