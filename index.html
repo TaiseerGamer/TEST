@@ -1,119 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gourmet Burger Tycoon & Simulator</title>
+    <title>Burger Cooking Simulator</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="game-wrapper">
-        
-        <div class="panel">
-            <div class="panel-title">
-                <span>Active Orders</span>
-                <span style="font-size: 0.75rem; color: var(--accent-blue);" id="ticketCount">Recipe Mode</span>
-            </div>
-            <div class="recipe-list" id="recipeList">
-                </div>
-        </div>
+<h1>🍔 Burger Cooking Simulator v0.0.0</h1>
 
-        <div class="main-kitchen">
-            
-            <div class="grill-area">
-                <div class="grates"></div>
-                <div class="heating-element" id="heatGlow"></div>
-                
-                <div class="patty-container" id="pattyHitbox">
-                    <div class="patty" id="physicalPatty">
-                        <div class="side-tag" id="sideVisualTag">SIDE A</div>
-                    </div>
-                </div>
-            </div>
+<div class="stats">
+    Coins: <span id="coins">0</span>
+</div>
 
-            <div class="assembly-area">
-                <div class="panel-title" style="border: none; margin-bottom: 6px; font-size: 0.85rem;">
-                    <span>Assembly Table</span>
-                    <span style="color: #a1a1aa; font-size: 0.7rem; font-family: monospace;" id="stackCount">0 items stacked</span>
-                </div>
-                
-                <div class="assembly-grid">
-                    <button class="btn-ingredient" data-ing="bun_bottom">🍞 Bottom Bun</button>
-                    <button class="btn-ingredient" data-ing="patty">🥩 Cooked Patty</button>
-                    <button class="btn-ingredient" data-ing="cheese">🧀 Cheddar</button>
-                    <button class="btn-ingredient" data-ing="lettuce">🥬 Lettuce</button>
-                    <button class="btn-ingredient" data-ing="tomato">🍅 Tomato</button>
-                    <button class="btn-ingredient" data-ing="bacon">🥓 Bacon</button>
-                    <button class="btn-ingredient" data-ing="sauce">🍯 Ketchup/Sauce</button>
-                    <button class="btn-ingredient" data-ing="bun_top">🍞 Top Bun</button>
-                </div>
+<div class="order-box">
+    <h2>Customer Order</h2>
+    <p id="order">Burger</p>
+    <button onclick="newOrder()">New Order</button>
+</div>
 
-                <div class="stack-display" id="burgerStackContainer">
-                    </div>
-            </div>
+<div class="kitchen">
+    <h2>Kitchen</h2>
 
-            <div class="control-row">
-                <div class="heat-cluster">
-                    <button class="btn-heat active" data-heat="low">Low</button>
-                    <button class="btn-heat" data-heat="med">Med</button>
-                    <button class="btn-heat" data-heat="high">High</button>
-                </div>
+    <button onclick="cookPatty()">Cook Patty</button>
+    <button onclick="addPatty()">Add Patty</button>
+    <button onclick="addLettuce()">Add Lettuce</button>
+    <button onclick="addCheese()">Add Cheese</button>
+    <button onclick="serveBurger()">Serve Burger</button>
+</div>
 
-                <button class="btn-action" id="cmdFlip">Flip Patty</button>
-                <button class="btn-action" id="cmdClearStack" style="background:#6b3e3e; border-bottom-color:#4a2b2b;">Trash Stack</button>
-                
-                <button class="btn-serve" id="cmdServe">Serve Order</button>
-            </div>
+<div class="burger">
+    <h2>Current Burger</h2>
+    <ul id="burgerList"></ul>
+</div>
 
-            <div class="dashboard">
-                <div class="metric">
-                    <span class="m-label">Clock Timer</span>
-                    <span class="m-val" id="telemetryTime">0.0s</span>
-                </div>
-                <div class="metric">
-                    <span class="m-label">Patty Side A</span>
-                    <span class="m-val" id="telemetryA">0%</span>
-                </div>
-                <div class="metric">
-                    <span class="m-label">Patty Side B</span>
-                    <span class="m-val" id="telemetryB">0%</span>
-                </div>
-            </div>
-
-            <div class="overlay" id="evalWindow">
-                <div class="summary-card">
-                    <h2>Ticket Closed Evaluation</h2>
-                    <div class="stars" id="evalStars">⭐⭐⭐⭐⭐</div>
-                    <p class="g-title" id="evalTitle">Flawless Delivery!</p>
-                    <p class="g-desc" id="evalDesc">Your production pipeline matches target blueprints exactly.</p>
-                    
-                    <div class="breakdown-box">
-                        <div class="b-row">
-                            <span>Target Burger Blueprints:</span>
-                            <span id="lblTargetName" style="color:var(--accent-blue);">Classic</span>
-                        </div>
-                        <div class="b-row">
-                            <span>Patty Quality Score:</span>
-                            <span id="lblPattyScore">0 / 50</span>
-                        </div>
-                        <div class="b-row">
-                            <span>Assembly Precision Score:</span>
-                            <span id="lblAssemblyScore">0 / 50</span>
-                        </div>
-                        <div class="b-row total">
-                            <span>Overall Combined Score:</span>
-                            <span id="lblCombinedScore" style="color:var(--lcd-green);">0 / 100</span>
-                        </div>
-                    </div>
-
-                    <button class="btn-reset" id="cmdNextTicket">Accept Next Ticket</button>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
