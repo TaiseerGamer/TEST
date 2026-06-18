@@ -11,16 +11,20 @@
   <div id="game">
     <div id="kitchen">
       <div id="grill"></div>
-      <div id="ingredients"></div>
+      <div id="ingredients">
+        <button onclick="addIngredient('bun')">Add Bun</button>
+        <button onclick="addIngredient('patty')">Add Patty</button>
+        <button onclick="addIngredient('cheese')">Add Cheese</button>
+        <button onclick="addIngredient('lettuce')">Add Lettuce</button>
+      </div>
+      <div id="burger"></div>
+      <button onclick="assembleBurger()">Assemble Burger</button>
     </div>
     
     <div id="ui">
       <p>Money: $<span id="money">100</span></p>
       <p>Orders Served: <span id="orders">0</span></p>
-      
-      <button onclick="cookPatty()">Cook Patty</button>
-      <button onclick="assembleBurger()">Assemble Burger</button>
-      <button onclick="serveCustomer()">Serve Customer</button>
+      <button onclick="newCustomer()">New Customer</button>
     </div>
     
     <div id="customers"></div>

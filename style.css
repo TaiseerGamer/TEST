@@ -16,7 +16,6 @@ h1 {
 
 #kitchen {
   width: 400px;
-  height: 400px;
   background: #fff3cd;
   border: 2px solid #333;
   padding: 10px;
@@ -39,9 +38,14 @@ h1 {
 }
 
 #ingredients {
+  margin: 10px 0;
+}
+
+#burger {
+  min-height: 50px;
+  margin: 10px;
   background: #eee;
-  padding: 10px;
-  min-height: 100px;
+  padding: 5px;
 }
 
 #ui {
@@ -65,8 +69,25 @@ button:hover {
 }
 
 #customers {
-  width: 200px;
+  width: 250px;
   background: #f9f9f9;
   border: 2px solid #333;
   padding: 10px;
+}
+
+.customer {
+  border-bottom: 1px solid #ccc;
+  padding: 5px;
+}
+
+.progress {
+  height: 10px;
+  background: #ddd;
+  margin-top: 5px;
+}
+
+.progress-bar {
+  height: 10px;
+  background: #e74c3c;
+  width: 100%;
 }
