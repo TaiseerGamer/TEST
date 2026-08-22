@@ -2,81 +2,30 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Coin Clicker & Food Boxes</title>
+  <title>Coin Clicker Game</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- ===== LOGIN / SIGNUP SCREEN ===== -->
-  <div id="auth-screen">
-    <div class="auth-card">
-      <h1>🪙 Coin Clicker</h1>
-      <p class="subtitle">Click coins • Open food boxes • Collect treats!</p>
-
-      <div class="auth-tabs">
-        <button id="tab-login" class="tab active">Log In</button>
-        <button id="tab-signup" class="tab">Sign Up</button>
-      </div>
-
-      <form id="auth-form">
-        <div class="input-group">
-          <label for="username">Username</label>
-          <input type="text" id="username" placeholder="Enter username" maxlength="20" autocomplete="username">
-        </div>
-        <div class="input-group">
-          <label for="password">Password</label>
-          <input type="password" id="password" placeholder="Enter password" maxlength="30" autocomplete="current-password">
-        </div>
-        <p id="auth-error" class="error-msg"></p>
-        <button type="submit" id="auth-submit" class="btn primary">Log In</button>
-      </form>
-    </div>
+  <div id="auth">
+    <h2>Login / Sign Up</h2>
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="signup()">Sign Up</button>
+    <button onclick="login()">Login</button>
+    <p id="authMessage"></p>
   </div>
 
-  <!-- ===== GAME SCREEN ===== -->
-  <div id="game-screen" class="hidden">
-    <header class="game-header">
-      <div class="player-info">
-        <span id="display-username">Player</span>
-        <button id="logout-btn" class="btn small">Log Out</button>
-      </div>
-      <div class="money-display">
-        <span class="coin-icon">🪙</span>
-        <span id="money-count">0</span>
-      </div>
-    </header>
+  <div id="game" style="display:none;">
+    <h1>💰 Coin Clicker</h1>
+    <p>Money: <span id="money">0</span></p>
+    <button id="coin">Click Coin</button>
 
-    <main class="game-main">
-      <!-- Coin Click Area -->
-      <section class="coin-section">
-        <button id="coin-btn" class="coin-button" title="Click me!">
-          <span class="coin-emoji">🪙</span>
-        </button>
-        <p class="hint">Click the coin to earn money!</p>
-        <p class="click-power">+ <span id="click-power">1</span> per click</p>
-      </section>
+    <h2>🎁 Loot Boxes</h2>
+    <div id="boxes"></div>
 
-      <!-- Shop -->
-      <section class="shop-section">
-        <h2>📦 Food Boxes</h2>
-        <p class="shop-desc">Higher rarity boxes = better luck!</p>
-        <div id="shop-boxes" class="boxes-grid"></div>
-      </section>
-
-      <!-- Inventory -->
-      <section class="inventory-section">
-        <h2>🍎 Your Food Collection</h2>
-        <div class="inventory-stats">
-          <span>Total foods: <strong id="total-foods">0</strong></span>
-          <span>Collection value: <strong id="collection-value">0</strong></span>
-        </div>
-        <div id="inventory-list" class="inventory-grid"></div>
-      </section>
-    </main>
+    <h2>Inventory</h2>
+    <ul id="inventory"></ul>
   </div>
-
-  <!-- Toast notification -->
-  <div id="toast" class="toast hidden"></div>
 
   <script src="script.js"></script>
 </body>
