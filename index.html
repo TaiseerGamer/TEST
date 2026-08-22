@@ -3,64 +3,80 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Coin & Food Gacha Game</title>
+  <title>Coin Clicker & Food Boxes</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- ===== LOGIN / SIGNUP SCREEN ===== -->
+  <div id="auth-screen">
+    <div class="auth-card">
+      <h1>🪙 Coin Clicker</h1>
+      <p class="subtitle">Click coins • Open food boxes • Collect treats!</p>
 
-  <div id="auth-screen" class="screen">
-    <div class="auth-box">
-      <h2 id="auth-title">Login</h2>
-      <input type="text" id="username" placeholder="Username">
-      <input type="password" id="password" placeholder="Password">
-      <button id="auth-btn" onclick="handleAuth()">Login</button>
-      <p class="toggle-text" onclick="toggleAuthMode()">Don't have an account? Sign Up</p>
-      <p id="auth-error" class="error"></p>
+      <div class="auth-tabs">
+        <button id="tab-login" class="tab active">Log In</button>
+        <button id="tab-signup" class="tab">Sign Up</button>
+      </div>
+
+      <form id="auth-form">
+        <div class="input-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" placeholder="Enter username" maxlength="20" required autocomplete="username">
+        </div>
+        <div class="input-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="Enter password" maxlength="30" required autocomplete="current-password">
+        </div>
+        <p id="auth-error" class="error-msg"></p>
+        <button type="submit" id="auth-submit" class="btn primary">Log In</button>
+      </form>
     </div>
   </div>
 
-  <div id="game-screen" class="screen hidden">
-    <header>
-      <div>User: <b id="user-display"></b></div>
-      <button onclick="logout()">Logout</button>
+  <!-- ===== GAME SCREEN ===== -->
+  <div id="game-screen" class="hidden">
+    <header class="game-header">
+      <div class="player-info">
+        <span id="display-username">Player</span>
+        <button id="logout-btn" class="btn small">Log Out</button>
+      </div>
+      <div class="money-display">
+        <span class="coin-icon">🪙</span>
+        <span id="money-count">0</span>
+      </div>
     </header>
 
-    <main>
-      <section class="clicker-section">
-        <h2>Coins: $<span id="coin-count">0</span></h2>
-        <div id="coin" onclick="clickCoin()">🪙</div>
+    <main class="game-main">
+      <!-- Coin Click Area -->
+      <section class="coin-section">
+        <button id="coin-btn" class="coin-button" title="Click me!">
+          <span class="coin-emoji">🪙</span>
+        </button>
+        <p class="hint">Click the coin to earn money!</p>
+        <p class="click-power">+ <span id="click-power">1</span> per click</p>
       </section>
 
+      <!-- Shop -->
       <section class="shop-section">
-        <h2>Food Boxes</h2>
-        <div class="box-container">
-          <div class="box-card">
-            <h3>Basic Box</h3>
-            <p>Cost: $10</p>
-            <p><small>90% Common, 10% Rare</small></p>
-            <button onclick="openBox('basic')">Open</button>
-          </div>
-          <div class="box-card">
-            <h3>Super Box</h3>
-            <p>Cost: $50</p>
-            <p><small>50% Common, 35% Rare, 15% Legendary</small></p>
-            <button onclick="openBox('super')">Open</button>
-          </div>
-          <div class="box-card">
-            <h3>Ultra Box</h3>
-            <p>Cost: $200</p>
-            <p><small>10% Common, 40% Rare, 50% Legendary</small></p>
-            <button onclick="openBox('ultra')">Open</button>
-          </div>
-        </div>
+        <h2>📦 Food Boxes</h2>
+        <p class="shop-desc">Higher rarity boxes = better luck!</p>
+        <div id="shop-boxes" class="boxes-grid"></div>
       </section>
 
+      <!-- Inventory -->
       <section class="inventory-section">
-        <h2>Inventory</h2>
-        <div id="inventory-list"></div>
+        <h2>🍎 Your Food Collection</h2>
+        <div class="inventory-stats">
+          <span>Total foods: <strong id="total-foods">0</strong></span>
+          <span>Collection value: <strong id="collection-value">0</strong></span>
+        </div>
+        <div id="inventory-list" class="inventory-grid"></div>
       </section>
     </main>
   </div>
+
+  <!-- Toast notification -->
+  <div id="toast" class="toast hidden"></div>
 
   <script src="script.js"></script>
 </body>
