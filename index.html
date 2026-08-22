@@ -1,33 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Coin Clicker Game</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="auth">
-    <h2>Login / Sign Up</h2>
-    <input type="text" id="username" placeholder="Username">
-    <input type="password" id="password" placeholder="Password">
-    <button id="signupBtn">Sign Up</button>
-    <button id="loginBtn">Login</button>
-    <p id="authMessage"></p>
-  </div>
+  <main>
+    <section id="auth" class="card">
+      <h2>Login or Sign Up</h2>
+      <input id="username" type="text" placeholder="Username" autocomplete="username" />
+      <input id="password" type="password" placeholder="Password" autocomplete="current-password" />
+      <div class="row">
+        <button id="signupBtn">Sign Up</button>
+        <button id="loginBtn">Login</button>
+      </div>
+      <p id="authMessage" class="message"></p>
+    </section>
 
-  <div id="game" style="display:none;">
-    <h1>💰 Coin Clicker</h1>
-    <p>Money: <span id="money">0</span></p>
-    <button id="coin">Click Coin</button>
+    <section id="game" class="card" style="display:none;">
+      <header class="game-header">
+        <h1>💰 Coin Clicker</h1>
+        <div class="status">
+          <span>Player: <strong id="playerName">—</strong></span>
+          <button id="logoutBtn" class="small">Log Out</button>
+        </div>
+      </header>
 
-    <h2>🎁 Loot Boxes</h2>
-    <div id="boxes"></div>
+      <div class="center">
+        <p>Money: <span id="money">0</span></p>
+        <button id="coin" class="coin">Click Coin</button>
+      </div>
 
-    <h2>Inventory</h2>
-    <ul id="inventory"></ul>
+      <h2>🎁 Loot Boxes</h2>
+      <div id="boxes" class="boxes"></div>
 
-    <button id="logoutBtn">Log Out</button>
-  </div>
+      <h2>Inventory</h2>
+      <ul id="inventory" class="inventory"></ul>
+
+      <p class="hint">Progress auto-saves every 5 seconds and when you leave the page.</p>
+    </section>
+  </main>
 
   <script src="script.js"></script>
 </body>
