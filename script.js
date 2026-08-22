@@ -1,7 +1,10 @@
+let currentUser = null;
+let gameData = { money: 0, inventory: [] };
+
 // --- Authentication ---
 function signup() {
-  const user = document.getElementById("username").value;
-  const pass = document.getElementById("password").value;
+  const user = document.getElementById("username").value.trim();
+  const pass = document.getElementById("password").value.trim();
   if (!user || !pass) {
     document.getElementById("authMessage").innerText = "Enter username & password!";
     return;
@@ -11,22 +14,19 @@ function signup() {
 }
 
 function login() {
-  const user = document.getElementById("username").value;
-  const pass = document.getElementById("password").value;
+  const user = document.getElementById("username").value.trim();
+  const pass = document.getElementById("password").value.trim();
   const savedPass = localStorage.getItem("user_" + user);
 
   if (savedPass === pass) {
     currentUser = user;
-    loadGame();
     document.getElementById("auth").style.display = "none";
     document.getElementById("game").style.display = "block";
+    loadGame();   // <-- moved here so UI updates after login
   } else {
     document.getElementById("authMessage").innerText = "Invalid login!";
   }
 }
-
-let currentUser = null;
-let gameData = { money: 0, inventory: [] };
 
 // --- Game Setup ---
 const boxes = [
