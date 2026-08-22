@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Food Coin Simulator</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- =========================
+         LOGIN / SIGN UP SCREEN
+    ========================== -->
+    <div id="authScreen" class="screen">
+
+        <div class="auth-box">
+
+            <h1>🍔 Food Coin Simulator</h1>
+            <p class="subtitle">Click. Earn. Open. Collect.</p>
+
+            <div class="auth-tabs">
+                <button id="loginTab" class="auth-tab active">
+                    Login
+                </button>
+
+                <button id="signupTab" class="auth-tab">
+                    Sign Up
+                </button>
+            </div>
+
+            <!-- Login -->
+            <div id="loginForm" class="auth-form">
+
+                <input
+                    type="text"
+                    id="loginUsername"
+                    placeholder="Username"
+                    maxlength="20"
+                    autocomplete="username"
+                >
+
+                <input
+                    type="password"
+                    id="loginPassword"
+                    placeholder="Password"
+                    maxlength="50"
+                    autocomplete="current-password"
+                >
+
+                <button id="loginButton" class="primary-button">
+                    Login
+                </button>
+
+                <p id="loginMessage" class="auth-message"></p>
+
+            </div>
+
+            <!-- Sign Up -->
+            <div id="signupForm" class="auth-form hidden">
+
+                <input
+                    type="text"
+                    id="signupUsername"
+                    placeholder="Choose a username"
+                    maxlength="20"
+                    autocomplete="username"
+                >
+
+                <input
+                    type="password"
+                    id="signupPassword"
+                    placeholder="Choose a password"
+                    maxlength="50"
+                    autocomplete="new-password"
+                >
+
+                <input
+                    type="password"
+                    id="signupPasswordConfirm"
+                    placeholder="Confirm password"
+                    maxlength="50"
+                    autocomplete="new-password"
+                >
+
+                <button id="signupButton" class="primary-button">
+                    Create Account
+                </button>
+
+                <p id="signupMessage" class="auth-message"></p>
+
+            </div>
+
+            <p class="local-save-warning">
+                💾 Your account is currently saved on this device.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         MAIN GAME
+    ========================== -->
+    <div id="gameScreen" class="screen hidden">
+
+        <!-- HEADER -->
+        <header class="top-bar">
+
+            <div class="game-title">
+                🍔 Food Coin Simulator
+            </div>
+
+            <div class="player-info">
+
+                <span id="playerUsername">
+                    Player
+                </span>
+
+                <button id="logoutButton" class="small-button">
+                    Logout
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <!-- MONEY -->
+        <section class="money-section">
+
+            <div class="money-card">
+
+                <span class="money-icon">💰</span>
+
+                <div>
+                    <div class="money-label">
+                        Money
+                    </div>
+
+                    <div id="moneyDisplay" class="money-display">
+                        $0
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="stats-card">
+
+                <div>
+                    <span>🖱️ Clicks</span>
+                    <strong id="clickDisplay">0</strong>
+                </div>
+
+                <div>
+                    <span>📦 Boxes</span>
+                    <strong id="boxDisplay">0</strong>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- MAIN CONTENT -->
+        <main class="game-container">
+
+
+            <!-- =========================
+                 COIN CLICKER
+            ========================== -->
+            <section class="clicker-section">
+
+                <h2>💰 Click the Coin!</h2>
+
+                <p class="section-description">
+                    Click the coin to earn money.
+                </p>
+
+                <div class="coin-area">
+
+                    <button
+                        id="coinButton"
+                        class="coin-button"
+                        aria-label="Click coin to earn money"
+                    >
+                        🪙
+                    </button>
+
+                </div>
+
+                <div id="clickReward" class="click-reward">
+                    +$1
+                </div>
+
+                <p class="click-power">
+                    Each click gives:
+                    <strong id="clickValueDisplay">$1</strong>
+                </p>
+
+            </section>
+
+
+            <!-- =========================
+                 BOX SHOP
+            ========================== -->
+            <section class="shop-section">
+
+                <div class="section-header">
+
+                    <div>
+                        <h2>📦 Food Boxes</h2>
+
+                        <p class="section-description">
+                            Spend your money to discover food!
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div id="boxContainer" class="box-container">
+
+
+                    <!-- BASIC BOX -->
+                    <div class="box-card">
+
+                        <div class="box-icon">
+                            📦
+                        </div>
+
+                        <h3>Basic Box</h3>
+
+                        <div class="box-rarity">
+                            Common → Rare
+                        </div>
+
+                        <div class="box-luck">
+                            🍀 Luck: <strong>1×</strong>
+                        </div>
+
+                        <div class="box-price">
+                            💰 $100
+                        </div>
+
+                        <button
+                            class="open-box-button"
+                            data-box="basic"
+                        >
+                            Open Box
+                        </button>
+
+                    </div>
+
+
+                    <!-- GOOD BOX -->
+                    <div class="box-card">
+
+                        <div class="box-icon">
+                            🎁
+                        </div>
+
+                        <h3>Good Box</h3>
+
+                        <div class="box-rarity">
+                            Common → Epic
+                        </div>
+
+                        <div class="box-luck">
+                            🍀 Luck: <strong>2×</strong>
+                        </div>
+
+                        <div class="box-price">
+                            💰 $1,000
+                        </div>
+
+                        <button
+                            class="open-box-button"
+                            data-box="good"
+                        >
+                            Open Box
+                        </button>
+
+                    </div>
+
+
+                    <!-- PREMIUM BOX -->
+                    <div class="box-card">
+
+                        <div class="box-icon">
+                            💎
+                        </div>
+
+                        <h3>Premium Box</h3>
+
+                        <div class="box-rarity">
+                            Rare → Legendary
+                        </div>
+
+                        <div class="box-luck">
+                            🍀 Luck: <strong>5×</strong>
+                        </div>
+
+                        <div class="box-price">
+                            💰 $10,000
+                        </div>
+
+                        <button
+                            class="open-box-button"
+                            data-box="premium"
+                        >
+                            Open Box
+                        </button>
+
+                    </div>
+
+
+                    <!-- ROYAL BOX -->
+                    <div class="box-card">
+
+                        <div class="box-icon">
+                            👑
+                        </div>
+
+                        <h3>Royal Box</h3>
+
+                        <div class="box-rarity">
+                            Epic → Mythic
+                        </div>
+
+                        <div class="box-luck">
+                            🍀 Luck: <strong>10×</strong>
+                        </div>
+
+                        <div class="box-price">
+                            💰 $100,000
+                        </div>
+
+                        <button
+                            class="open-box-button"
+                            data-box="royal"
+                        >
+                            Open Box
+                        </button>
+
+                    </div>
+
+
+                    <!-- GOD BOX -->
+                    <div class="box-card god-box">
+
+                        <div class="box-icon">
+                            🌌
+                        </div>
+
+                        <h3>GOD Box</h3>
+
+                        <div class="box-rarity">
+                            Legendary → Secret
+                        </div>
+
+                        <div class="box-luck">
+                            🍀 Luck: <strong>25×</strong>
+                        </div>
+
+                        <div class="box-price">
+                            💰 $1,000,000
+                        </div>
+
+                        <button
+                            class="open-box-button"
+                            data-box="god"
+                        >
+                            Open Box
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================
+                 RESULT AREA
+            ========================== -->
+            <section class="result-section">
+
+                <h2>🎉 Latest Food</h2>
+
+                <div id="resultCard" class="result-card">
+
+                    <div class="result-placeholder">
+                        Open a box to discover food!
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================
+                 INVENTORY
+            ========================== -->
+            <section class="inventory-section">
+
+                <div class="section-header">
+
+                    <div>
+                        <h2>🍔 Food Collection</h2>
+
+                        <p class="section-description">
+                            Foods you have discovered.
+                        </p>
+                    </div>
+
+                    <div class="inventory-count">
+                        <span id="inventoryCount">0</span> Foods
+                    </div>
+
+                </div>
+
+                <div
+                    id="inventoryContainer"
+                    class="inventory-container"
+                >
+
+                    <div class="inventory-placeholder">
+                        Your collection is empty.
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================
+                 EVENTS
+            ========================== -->
+            <section class="events-section">
+
+                <div class="section-header">
+
+                    <div>
+                        <h2>🎉 Events</h2>
+
+                        <p class="section-description">
+                            Special events will appear here.
+                        </p>
+                    </div>
+
+                    <div class="event-status">
+                        No active events
+                    </div>
+
+                </div>
+
+                <div id="eventContainer" class="event-container">
+
+                    <div class="no-event">
+                        🚧 No events are currently active.
+                    </div>
+
+                </div>
+
+            </section>
+
+
+        </main>
+
+
+        <!-- =========================
+             SAVE STATUS
+        ========================== -->
+        <div id="saveStatus" class="save-status">
+            💾 Saved
+        </div>
+
+
+        <!-- =========================
+             BOX RESULT MODAL
+        ========================== -->
+        <div id="resultModal" class="modal hidden">
+
+            <div class="modal-content">
+
+                <button
+                    id="closeModalButton"
+                    class="close-modal"
+                >
+                    ✕
+                </button>
+
+                <div id="modalBoxIcon" class="modal-box-icon">
+                    📦
+                </div>
+
+                <p class="modal-title">
+                    You got...
+                </p>
+
+                <div
+                    id="modalFoodIcon"
+                    class="modal-food-icon"
+                >
+                    🍔
+                </div>
+
+                <h2 id="modalFoodName">
+                    Burger
+                </h2>
+
+                <div
+                    id="modalFoodRarity"
+                    class="modal-rarity"
+                >
+                    Common
+                </div>
+
+                <div
+                    id="modalFoodValue"
+                    class="modal-value"
+                >
+                    Value: $10
+                </div>
+
+                <button
+                    id="modalContinueButton"
+                    class="primary-button"
+                >
+                    Awesome!
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- JAVASCRIPT -->
+    <script src="script.js"></script>
+
+</body>
+</html>
