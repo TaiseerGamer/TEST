@@ -46,7 +46,6 @@ const BOXES = [
     emoji: "📦",
     cost: 25,
     luck: "Low luck",
-    // chances: common, uncommon, rare, epic, legendary
     weights: [80, 15, 4, 1, 0],
   },
   {
@@ -86,52 +85,71 @@ const BOXES = [
 const RARITY_ORDER = ["common", "uncommon", "rare", "epic", "legendary"];
 
 // -------------------- STATE --------------------
-let currentUser = null; // username string
+let currentUser = null;
 let gameData = {
   money: 0,
-  inventory: {}, // { foodId: count }
+  inventory: {},
   totalClicks: 0,
 };
 
-// -------------------- STORAGE HELPERS --------------------
+// -------------------- SAFE STORAGE --------------------
 const USERS_KEY = "coinClicker_users";
 const CURRENT_USER_KEY = "coinClicker_currentUser";
 
 function getUsers() {
   try {
-    return JSON.parse(localStorage.getItem(USERS_KEY)) || {};
-  } catch {
+    const raw = localStorage.getItem(USERS_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch (e) {
+    console.warn("Could not read users from localStorage", e);
     return {};
   }
 }
 
 function saveUsers(users) {
-  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  try {
+    localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  } catch (e) {
+    console.warn("Could not save users to localStorage", e);
+    showToast("Warning: Could not save account (storage blocked)");
+  }
 }
 
 function saveProgress() {
   if (!currentUser) return;
-  const users = getUsers();
-  if (users[currentUser]) {
-    users[currentUser].data = { ...gameData };
-    saveUsers(users);
+  try {
+    const users = getUsers();
+    if (users[currentUser]) {
+      users[currentUser].data = {
+        money: gameData.money,
+        inventory: gameData.inventory,
+        totalClicks: gameData.totalClicks,
+      };
+      saveUsers(users);
+    }
+  } catch (e) {
+    console.warn("Auto-save failed", e);
   }
 }
 
 function loadProgress(username) {
-  const users = getUsers();
-  if (users[username] && users[username].data) {
-    gameData = {
-      money: users[username].data.money || 0,
-      inventory: users[username].data.inventory || {},
-      totalClicks: users[username].data.totalClicks || 0,
-    };
-  } else {
+  try {
+    const users = getUsers();
+    if (users[username] && users[username].data) {
+      gameData = {
+        money: users[username].data.money || 0,
+        inventory: users[username].data.inventory || {},
+        totalClicks: users[username].data.totalClicks || 0,
+      };
+    } else {
+      gameData = { money: 0, inventory: {}, totalClicks: 0 };
+    }
+  } catch (e) {
     gameData = { money: 0, inventory: {}, totalClicks: 0 };
   }
 }
 
-// Auto-save every 3 seconds + on important actions
+// Auto-save every 3 seconds
 setInterval(() => {
   if (currentUser) saveProgress();
 }, 3000);
@@ -140,104 +158,29 @@ window.addEventListener("beforeunload", () => {
   if (currentUser) saveProgress();
 });
 
-// -------------------- AUTH --------------------
-const authScreen = document.getElementById("auth-screen");
-const gameScreen = document.getElementById("game-screen");
-const authForm = document.getElementById("auth-form");
-const authError = document.getElementById("auth-error");
-const tabLogin = document.getElementById("tab-login");
-const tabSignup = document.getElementById("tab-signup");
-const authSubmit = document.getElementById("auth-submit");
+// -------------------- HELPERS --------------------
+function formatNumber(n) {
+  if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + "M";
+  if (n >= 1_000) return (n / 1_000).toFixed(1) + "K";
+  return String(n);
+}
 
-let isSignupMode = false;
+let toastTimeout = null;
+function showToast(message) {
+  const toast = document.getElementById("toast");
+  if (!toast) return;
+  toast.textContent = message;
+  toast.classList.remove("hidden");
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => {
+    toast.classList.add("hidden");
+  }, 2500);
+}
 
-tabLogin.addEventListener("click", () => {
-  isSignupMode = false;
-  tabLogin.classList.add("active");
-  tabSignup.classList.remove("active");
-  authSubmit.textContent = "Log In";
-  authError.textContent = "";
-});
-
-tabSignup.addEventListener("click", () => {
-  isSignupMode = true;
-  tabSignup.classList.add("active");
-  tabLogin.classList.remove("active");
-  authSubmit.textContent = "Sign Up";
-  authError.textContent = "";
-});
-
-authForm.addEventListener("submit", (e) => {
-  e.preventDefault();
-  const username = document.getElementById("username").value.trim();
-  const password = document.getElementById("password").value;
-
-  if (username.length < 3) {
-    authError.textContent = "Username must be at least 3 characters.";
-    return;
-  }
-  if (password.length < 3) {
-    authError.textContent = "Password must be at least 3 characters.";
-    return;
-  }
-
-  const users = getUsers();
-
-  if (isSignupMode) {
-    if (users[username]) {
-      authError.textContent = "Username already taken.";
-      return;
-    }
-    users[username] = {
-      password: password, // stored locally only (for demo)
-      data: { money: 0, inventory: {}, totalClicks: 0 },
-    };
-    saveUsers(users);
-    showToast("Account created! Welcome 🎉");
-  } else {
-    if (!users[username] || users[username].password !== password) {
-      authError.textContent = "Wrong username or password.";
-      return;
-    }
-  }
-
-  // Success
-  currentUser = username;
-  localStorage.setItem(CURRENT_USER_KEY, username);
-  loadProgress(username);
-  startGame();
-});
-
-document.getElementById("logout-btn").addEventListener("click", () => {
-  saveProgress();
-  currentUser = null;
-  localStorage.removeItem(CURRENT_USER_KEY);
-  gameScreen.classList.add("hidden");
-  authScreen.classList.remove("hidden");
-  document.getElementById("username").value = "";
-  document.getElementById("password").value = "";
-  authError.textContent = "";
-});
-
-// Auto-login if already logged in
-(function checkAutoLogin() {
-  const savedUser = localStorage.getItem(CURRENT_USER_KEY);
-  if (savedUser) {
-    const users = getUsers();
-    if (users[savedUser]) {
-      currentUser = savedUser;
-      loadProgress(savedUser);
-      startGame();
-    } else {
-      localStorage.removeItem(CURRENT_USER_KEY);
-    }
-  }
-})();
-
-// -------------------- GAME LOGIC --------------------
+// -------------------- GAME FUNCTIONS --------------------
 function startGame() {
-  authScreen.classList.add("hidden");
-  gameScreen.classList.remove("hidden");
+  document.getElementById("auth-screen").classList.add("hidden");
+  document.getElementById("game-screen").classList.remove("hidden");
   document.getElementById("display-username").textContent = currentUser;
   renderShop();
   updateUI();
@@ -247,16 +190,10 @@ function updateUI() {
   document.getElementById("money-count").textContent = formatNumber(gameData.money);
   document.getElementById("click-power").textContent = "1";
 
-  // Inventory
   const invList = document.getElementById("inventory-list");
-  const foodIds = Object.keys(gameData.inventory).filter(
-    (id) => gameData.inventory[id] > 0
-  );
-
   let totalFoods = 0;
   let collectionValue = 0;
 
-  // Calculate totals
   for (const rarity of RARITY_ORDER) {
     for (const food of FOODS[rarity]) {
       const count = gameData.inventory[food.id] || 0;
@@ -268,17 +205,14 @@ function updateUI() {
   document.getElementById("total-foods").textContent = totalFoods;
   document.getElementById("collection-value").textContent = formatNumber(collectionValue);
 
-  if (foodIds.length === 0) {
-    invList.innerHTML = `<div class="empty-inventory">No food yet. Open some boxes!</div>`;
-    return;
-  }
-
-  // Build sorted list (by rarity then name)
+  // Build inventory HTML
   let html = "";
+  let hasAny = false;
   for (const rarity of RARITY_ORDER) {
     for (const food of FOODS[rarity]) {
       const count = gameData.inventory[food.id] || 0;
       if (count > 0) {
+        hasAny = true;
         html += `
           <div class="food-item ${rarity}">
             <span class="count-badge">${count}</span>
@@ -290,41 +224,22 @@ function updateUI() {
       }
     }
   }
-  invList.innerHTML = html;
+
+  if (!hasAny) {
+    invList.innerHTML = `<div class="empty-inventory">No food yet. Open some boxes!</div>`;
+  } else {
+    invList.innerHTML = html;
+  }
+
+  // Update buy button states
+  document.querySelectorAll(".buy-btn").forEach((btn) => {
+    const box = BOXES.find((b) => b.id === btn.dataset.box);
+    if (box) {
+      btn.disabled = gameData.money < box.cost;
+    }
+  });
 }
 
-function formatNumber(n) {
-  if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + "M";
-  if (n >= 1_000) return (n / 1_000).toFixed(1) + "K";
-  return n.toString();
-}
-
-// -------------------- COIN CLICK --------------------
-const coinBtn = document.getElementById("coin-btn");
-
-coinBtn.addEventListener("click", (e) => {
-  gameData.money += 1;
-  gameData.totalClicks += 1;
-  updateUI();
-  saveProgress();
-
-  // Visual feedback
-  coinBtn.classList.add("clicked");
-  setTimeout(() => coinBtn.classList.remove("clicked"), 100);
-
-  // Floating +1
-  const rect = coinBtn.getBoundingClientRect();
-  const floater = document.createElement("div");
-  floater.className = "float-text";
-  floater.textContent = "+1";
-  floater.style.left = e.clientX - 15 + "px";
-  floater.style.top = e.clientY - 20 + "px";
-  floater.style.position = "fixed";
-  document.body.appendChild(floater);
-  setTimeout(() => floater.remove(), 800);
-});
-
-// -------------------- SHOP / BOXES --------------------
 function renderShop() {
   const container = document.getElementById("shop-boxes");
   container.innerHTML = BOXES.map(
@@ -343,10 +258,19 @@ function renderShop() {
   `
   ).join("");
 
-  // Attach listeners
   container.querySelectorAll(".buy-btn").forEach((btn) => {
     btn.addEventListener("click", () => buyBox(btn.dataset.box));
   });
+}
+
+function rollRarity(weights) {
+  const total = weights.reduce((a, b) => a + b, 0);
+  let rand = Math.random() * total;
+  for (let i = 0; i < weights.length; i++) {
+    rand -= weights[i];
+    if (rand <= 0) return RARITY_ORDER[i];
+  }
+  return RARITY_ORDER[0];
 }
 
 function buyBox(boxId) {
@@ -360,55 +284,158 @@ function buyBox(boxId) {
 
   gameData.money -= box.cost;
 
-  // Roll rarity
   const rarity = rollRarity(box.weights);
   const foodList = FOODS[rarity];
   const food = foodList[Math.floor(Math.random() * foodList.length)];
 
-  // Add to inventory
   if (!gameData.inventory[food.id]) {
     gameData.inventory[food.id] = 0;
   }
   gameData.inventory[food.id] += 1;
 
   updateUI();
-  renderShop(); // refresh disabled states
+  renderShop();
   saveProgress();
 
   showToast(`You got ${food.emoji} ${food.name} (${rarity})!`);
 }
 
-function rollRarity(weights) {
-  const total = weights.reduce((a, b) => a + b, 0);
-  let rand = Math.random() * total;
-  for (let i = 0; i < weights.length; i++) {
-    rand -= weights[i];
-    if (rand <= 0) return RARITY_ORDER[i];
-  }
-  return RARITY_ORDER[0];
-}
+// -------------------- INIT (runs after DOM is ready) --------------------
+function init() {
+  const authScreen = document.getElementById("auth-screen");
+  const gameScreen = document.getElementById("game-screen");
+  const authForm = document.getElementById("auth-form");
+  const authError = document.getElementById("auth-error");
+  const tabLogin = document.getElementById("tab-login");
+  const tabSignup = document.getElementById("tab-signup");
+  const authSubmit = document.getElementById("auth-submit");
+  const coinBtn = document.getElementById("coin-btn");
+  const logoutBtn = document.getElementById("logout-btn");
 
-// -------------------- TOAST --------------------
-let toastTimeout;
-function showToast(message) {
-  const toast = document.getElementById("toast");
-  toast.textContent = message;
-  toast.classList.remove("hidden");
-  clearTimeout(toastTimeout);
-  toastTimeout = setTimeout(() => {
-    toast.classList.add("hidden");
-  }, 2500);
-}
+  let isSignupMode = false;
 
-// Keep shop buttons updated when money changes
-const originalUpdateUI = updateUI;
-updateUI = function () {
-  originalUpdateUI();
-  // Re-enable/disable buy buttons without full re-render if possible
-  document.querySelectorAll(".buy-btn").forEach((btn) => {
-    const box = BOXES.find((b) => b.id === btn.dataset.box);
-    if (box) {
-      btn.disabled = gameData.money < box.cost;
-    }
+  // Tabs
+  tabLogin.addEventListener("click", () => {
+    isSignupMode = false;
+    tabLogin.classList.add("active");
+    tabSignup.classList.remove("active");
+    authSubmit.textContent = "Log In";
+    authError.textContent = "";
   });
-};
+
+  tabSignup.addEventListener("click", () => {
+    isSignupMode = true;
+    tabSignup.classList.add("active");
+    tabLogin.classList.remove("active");
+    authSubmit.textContent = "Sign Up";
+    authError.textContent = "";
+  });
+
+  // Form submit
+  authForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value;
+
+    authError.textContent = "";
+
+    if (username.length < 3) {
+      authError.textContent = "Username must be at least 3 characters.";
+      return;
+    }
+    if (password.length < 3) {
+      authError.textContent = "Password must be at least 3 characters.";
+      return;
+    }
+
+    const users = getUsers();
+
+    if (isSignupMode) {
+      if (users[username]) {
+        authError.textContent = "Username already taken. Try another.";
+        return;
+      }
+      users[username] = {
+        password: password,
+        data: { money: 0, inventory: {}, totalClicks: 0 },
+      };
+      saveUsers(users);
+      showToast("Account created! Welcome 🎉");
+    } else {
+      if (!users[username] || users[username].password !== password) {
+        authError.textContent = "Wrong username or password.";
+        return;
+      }
+    }
+
+    // Success — log in
+    currentUser = username;
+    try {
+      localStorage.setItem(CURRENT_USER_KEY, username);
+    } catch (e) {
+      console.warn("Could not save current user", e);
+    }
+    loadProgress(username);
+    startGame();
+  });
+
+  // Logout
+  logoutBtn.addEventListener("click", () => {
+    saveProgress();
+    currentUser = null;
+    try {
+      localStorage.removeItem(CURRENT_USER_KEY);
+    } catch (e) {}
+    gameScreen.classList.add("hidden");
+    authScreen.classList.remove("hidden");
+    document.getElementById("username").value = "";
+    document.getElementById("password").value = "";
+    authError.textContent = "";
+  });
+
+  // Coin click
+  coinBtn.addEventListener("click", (e) => {
+    gameData.money += 1;
+    gameData.totalClicks += 1;
+    updateUI();
+    saveProgress();
+
+    coinBtn.classList.add("clicked");
+    setTimeout(() => coinBtn.classList.remove("clicked"), 100);
+
+    // Floating +1
+    const floater = document.createElement("div");
+    floater.className = "float-text";
+    floater.textContent = "+1";
+    floater.style.left = e.clientX - 15 + "px";
+    floater.style.top = e.clientY - 20 + "px";
+    floater.style.position = "fixed";
+    document.body.appendChild(floater);
+    setTimeout(() => floater.remove(), 800);
+  });
+
+  // Auto-login if possible
+  try {
+    const savedUser = localStorage.getItem(CURRENT_USER_KEY);
+    if (savedUser) {
+      const users = getUsers();
+      if (users[savedUser]) {
+        currentUser = savedUser;
+        loadProgress(savedUser);
+        startGame();
+      } else {
+        localStorage.removeItem(CURRENT_USER_KEY);
+      }
+    }
+  } catch (e) {
+    console.warn("Auto-login skipped", e);
+  }
+}
+
+// Start when DOM is ready
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", init);
+} else {
+  init();
+}
