@@ -1,76 +1,281 @@
-:root{
-  --bg:#f4f6f8;
-  --card:#ffffff;
-  --accent:#3498db;
-  --accent-dark:#2980b9;
-  --muted:#666;
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  background:var(--bg);
-  color:#111;
-  display:flex;
-  min-height:100vh;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6fb;
+    color: #222;
+    min-height: 100vh;
 }
 
-main{width:100%;max-width:720px}
-
-.card{
-  background:var(--card);
-  padding:18px;
-  border-radius:12px;
-  box-shadow:0 6px 20px rgba(15,15,15,0.06);
-  margin-bottom:16px;
+header {
+    background: #ffffff;
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
-h1,h2{margin:8px 0}
-h1{font-size:24px}
-h2{font-size:18px}
-
-input[type="text"], input[type="password"]{
-  width:100%;
-  padding:10px 12px;
-  margin:8px 0;
-  border:1px solid #e0e6ea;
-  border-radius:8px;
-  font-size:15px;
+header h1 {
+    font-size: 28px;
 }
 
-.row{display:flex;gap:8px;justify-content:center;margin-top:8px}
-button{
-  background:var(--accent);
-  color:#fff;
-  border:none;
-  padding:10px 14px;
-  border-radius:8px;
-  cursor:pointer;
-  font-weight:600;
-}
-button.small{padding:6px 10px;font-size:13px}
-button:hover{background:var(--accent-dark)}
-
-.center{text-align:center}
-.coin{
-  font-size:20px;
-  background:linear-gradient(180deg,#ffd54a,#ffb300);
-  color:#111;
-  padding:14px 22px;
-  border-radius:12px;
-  margin-top:8px;
-  box-shadow:0 6px 18px rgba(0,0,0,0.08);
+.coins {
+    background: #fff4b8;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-size: 20px;
+    font-weight: bold;
 }
 
-.boxes{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:12px 0}
-.boxes button{background:#fff;color:#111;border:1px solid #e6eef6;padding:10px;border-radius:8px;min-width:140px}
-.inventory{list-style:none;padding:0;margin:8px 0}
-.inventory li{padding:6px 8px;border-radius:6px;background:#fbfdff;margin:6px 0;border:1px solid #eef6fb}
+main {
+    max-width: 1100px;
+    margin: auto;
+    padding: 35px 20px;
+}
 
-.message{color:var(--muted);min-height:20px}
-.hint{font-size:13px;color:var(--muted);margin-top:12px}
-.status{display:flex;gap:12px;align-items:center;justify-content:space-between}
+section {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+}
+
+section h2 {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Coin */
+
+.coin-section {
+    text-align: center;
+}
+
+.coin-button {
+    width: 180px;
+    height: 180px;
+    border: none;
+    border-radius: 50%;
+    background: #ffd83d;
+    font-size: 90px;
+    cursor: pointer;
+    box-shadow:
+        0 10px 0 #d7a900,
+        0 15px 25px rgba(0, 0, 0, 0.2);
+    transition: 0.1s;
+    user-select: none;
+}
+
+.coin-button:hover {
+    transform: scale(1.05);
+}
+
+.coin-button:active {
+    transform: translateY(8px);
+    box-shadow:
+        0 2px 0 #d7a900,
+        0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.coin-section p {
+    margin-top: 20px;
+    color: #777;
+}
+
+/* Shop */
+
+.box-container {
+    display: flex;
+    justify-content: center;
+}
+
+.box-card {
+    width: 280px;
+    text-align: center;
+    padding: 25px;
+    border: 2px solid #eee;
+    border-radius: 18px;
+}
+
+.box-icon {
+    font-size: 80px;
+    margin-bottom: 10px;
+}
+
+.box-card h3 {
+    margin-bottom: 10px;
+}
+
+.box-card p {
+    color: #777;
+    margin-bottom: 10px;
+}
+
+.box-card .price {
+    color: #d39b00;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.buy-button,
+.open-button,
+#collectButton {
+    border: none;
+    padding: 12px 25px;
+    border-radius: 12px;
+    background: #4f7cff;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.buy-button:hover,
+.open-button:hover,
+#collectButton:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+}
+
+/* Opening */
+
+.opening-section {
+    text-align: center;
+}
+
+.box-display {
+    font-size: 130px;
+    margin: 20px;
+    animation: float 1.5s infinite ease-in-out;
+}
+
+.open-button {
+    background: #43b85c;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Result */
+
+.result-section {
+    text-align: center;
+}
+
+.food-result {
+    font-size: 110px;
+    margin: 20px;
+}
+
+#foodName {
+    font-size: 28px;
+    margin-bottom: 8px;
+}
+
+#foodRarity {
+    font-weight: bold;
+    color: #777;
+    margin-bottom: 20px;
+}
+
+#collectButton {
+    background: #8b55e8;
+}
+
+/* Collection */
+
+.collection-info {
+    text-align: center;
+    margin-bottom: 25px;
+    font-weight: bold;
+}
+
+.collection-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+}
+
+.food-card {
+    border: 2px solid #eee;
+    border-radius: 15px;
+    padding: 18px;
+    text-align: center;
+    background: #fafafa;
+}
+
+.food-card .food-icon {
+    font-size: 55px;
+    margin-bottom: 8px;
+}
+
+.food-card h3 {
+    font-size: 16px;
+}
+
+.food-card p {
+    color: #777;
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+.locked {
+    opacity: 0.45;
+}
+
+.locked .food-icon {
+    filter: grayscale(1);
+}
+
+.hidden {
+    display: none;
+}
+
+/* Mobile */
+
+@media (max-width: 600px) {
+
+    header {
+        padding: 15px;
+    }
+
+    header h1 {
+        font-size: 20px;
+    }
+
+    .coins {
+        font-size: 16px;
+        padding: 8px 12px;
+    }
+
+    main {
+        padding: 20px 10px;
+    }
+
+    section {
+        padding: 20px;
+    }
+
+    .coin-button {
+        width: 150px;
+        height: 150px;
+        font-size: 75px;
+    }
+}

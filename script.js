@@ -1,192 +1,320 @@
-// Simple local-only auth + game with autosave.
-// Data stored in localStorage under keys:
-//  - "users" -> JSON object { username: password, ... }
-//  - "game_<username>" -> JSON game state
+// ===============================
+// FOOD COLLECTOR v0.0.0
+// ===============================
 
-// ---------- Config ----------
-const AUTO_SAVE_INTERVAL_MS = 5000;
+// Coins
+let coins = 0;
 
-// ---------- State ----------
-let currentUser = null;
-let gameData = { money: 0, inventory: [] };
-const boxes = [
-  { name: "Basic Box", cost: 10, luck: 0.5 },
-  { name: "Rare Box", cost: 50, luck: 0.7 },
-  { name: "Epic Box", cost: 200, luck: 0.9 }
+// Currently owned box
+let ownedBox = null;
+
+// Food waiting to be collected
+let pendingFood = null;
+
+
+// ===============================
+// FOOD DATABASE
+// ===============================
+
+const foods = [
+
+    // Common
+    {
+        name: "Apple",
+        icon: "🍎",
+        rarity: "Common",
+        chance: 45
+    },
+
+    {
+        name: "Bread",
+        icon: "🍞",
+        rarity: "Common",
+        chance: 30
+    },
+
+    {
+        name: "Banana",
+        icon: "🍌",
+        rarity: "Common",
+        chance: 15
+    },
+
+    // Uncommon
+    {
+        name: "Burger",
+        icon: "🍔",
+        rarity: "Uncommon",
+        chance: 5
+    },
+
+    {
+        name: "Pizza",
+        icon: "🍕",
+        rarity: "Uncommon",
+        chance: 3
+    },
+
+    // Rare
+    {
+        name: "Sushi",
+        icon: "🍣",
+        rarity: "Rare",
+        chance: 1
+    },
+
+    {
+        name: "Donut",
+        icon: "🍩",
+        rarity: "Rare",
+        chance: 1
+    }
 ];
 
-// ---------- Helpers ----------
-function getUsers() {
-  try {
-    return JSON.parse(localStorage.getItem("users") || "{}");
-  } catch {
-    return {};
-  }
-}
-function saveUsers(users) {
-  localStorage.setItem("users", JSON.stringify(users));
-}
-function showAuthMessage(text, isError = false) {
-  const el = document.getElementById("authMessage");
-  el.textContent = text || "";
-  el.style.color = isError ? "#b00020" : "";
-}
-function updateUI() {
-  document.getElementById("money").textContent = gameData.money;
-  const inv = document.getElementById("inventory");
-  inv.innerHTML = "";
-  gameData.inventory.forEach((it, idx) => {
-    const li = document.createElement("li");
-    li.textContent = it;
-    inv.appendChild(li);
-  });
-  document.getElementById("playerName").textContent = currentUser || "—";
+
+// ===============================
+// COLLECTION
+// ===============================
+
+let collection = [];
+
+
+// ===============================
+// ELEMENTS
+// ===============================
+
+const coinButton = document.getElementById("coinButton");
+const coinCount = document.getElementById("coinCount");
+
+const buyButtons = document.querySelectorAll(".buy-button");
+
+const openingSection = document.getElementById("openingSection");
+const openButton = document.getElementById("openButton");
+
+const resultSection = document.getElementById("resultSection");
+
+const foodResult = document.getElementById("foodResult");
+const foodName = document.getElementById("foodName");
+const foodRarity = document.getElementById("foodRarity");
+
+const collectButton = document.getElementById("collectButton");
+
+const collectionGrid = document.getElementById("collectionGrid");
+
+const collectionCount = document.getElementById("collectionCount");
+const totalFoods = document.getElementById("totalFoods");
+
+
+// ===============================
+// COIN SYSTEM
+// ===============================
+
+coinButton.addEventListener("click", () => {
+
+    coins++;
+
+    updateCoins();
+
+});
+
+function updateCoins() {
+
+    coinCount.textContent = coins;
+
 }
 
-// ---------- Auth ----------
-function signup() {
-  const user = document.getElementById("username").value.trim();
-  const pass = document.getElementById("password").value;
-  if (!user || !pass) {
-    showAuthMessage("Enter username and password.", true);
-    return;
-  }
-  const users = getUsers();
-  if (users[user]) {
-    showAuthMessage("User already exists. Please login.", true);
-    return;
-  }
-  users[user] = pass;
-  saveUsers(users);
-  // initialize game save
-  localStorage.setItem("game_" + user, JSON.stringify({ money: 0, inventory: [] }));
-  showAuthMessage("Account created. You are now logged in.");
-  // auto-login after signup
-  loginUser(user);
+
+// ===============================
+// BUY BOX
+// ===============================
+
+buyButtons.forEach(button => {
+
+    button.addEventListener("click", () => {
+
+        const boxType = button.dataset.box;
+
+        if (boxType === "basic") {
+
+            buyBasicBox();
+
+        }
+
+    });
+
+});
+
+
+function buyBasicBox() {
+
+    const price = 25;
+
+    if (coins < price) {
+
+        alert("You don't have enough coins!");
+
+        return;
+
+    }
+
+    coins -= price;
+
+    updateCoins();
+
+    ownedBox = "basic";
+
+    openingSection.classList.remove("hidden");
+
+    openingSection.scrollIntoView({
+        behavior: "smooth"
+    });
+
 }
 
-function login() {
-  const user = document.getElementById("username").value.trim();
-  const pass = document.getElementById("password").value;
-  if (!user || !pass) {
-    showAuthMessage("Enter username and password.", true);
-    return;
-  }
-  const users = getUsers();
-  if (!users[user]) {
-    showAuthMessage("No account found. Please sign up.", true);
-    return;
-  }
-  if (users[user] !== pass) {
-    showAuthMessage("Incorrect password.", true);
-    return;
-  }
-  showAuthMessage("");
-  loginUser(user);
-}
 
-function loginUser(user) {
-  currentUser = user;
-  // hide auth, show game
-  document.getElementById("auth").style.display = "none";
-  document.getElementById("game").style.display = "block";
-  loadGame();
-}
+// ===============================
+// OPEN BOX
+// ===============================
 
-// ---------- Logout ----------
-function logout() {
-  saveGame();
-  currentUser = null;
-  gameData = { money: 0, inventory: [] };
-  document.getElementById("game").style.display = "none";
-  document.getElementById("auth").style.display = "block";
-  showAuthMessage("Logged out.");
-  // clear input fields for convenience
-  document.getElementById("username").value = "";
-  document.getElementById("password").value = "";
-}
+openButton.addEventListener("click", () => {
 
-// ---------- Game actions ----------
-function buyBox(boxIndex) {
-  const box = boxes[boxIndex];
-  if (!box) return;
-  if (gameData.money < box.cost) {
-    alert("Not enough money!");
-    return;
-  }
-  gameData.money -= box.cost;
-  const gotFood = Math.random() < box.luck;
-  if (gotFood) {
-    const food = getRandomFood();
-    gameData.inventory.push(food);
-  } else {
-    // small non-blocking feedback
-    alert("Bad luck! No food this time.");
-  }
-  updateUI();
-  saveGame();
-}
+    if (!ownedBox) {
+        return;
+    }
+
+    pendingFood = getRandomFood();
+
+    foodResult.textContent = pendingFood.icon;
+    foodName.textContent = pendingFood.name;
+    foodRarity.textContent = pendingFood.rarity;
+
+    resultSection.classList.remove("hidden");
+
+    ownedBox = null;
+
+    openingSection.classList.add("hidden");
+
+    resultSection.scrollIntoView({
+        behavior: "smooth"
+    });
+
+});
+
+
+// ===============================
+// RANDOM FOOD
+// ===============================
 
 function getRandomFood() {
-  const foods = ["🍎 Apple", "🍔 Burger", "🍕 Pizza", "🍣 Sushi", "🍩 Donut", "🥗 Salad", "🌮 Taco"];
-  return foods[Math.floor(Math.random() * foods.length)];
-}
 
-// ---------- Save / Load ----------
-function saveGame() {
-  if (!currentUser) return;
-  try {
-    localStorage.setItem("game_" + currentUser, JSON.stringify(gameData));
-  } catch (e) {
-    console.warn("Save failed", e);
-  }
-}
+    const totalChance = foods.reduce(
+        (total, food) => total + food.chance,
+        0
+    );
 
-function loadGame() {
-  if (!currentUser) return;
-  const saved = localStorage.getItem("game_" + currentUser);
-  if (saved) {
-    try {
-      gameData = JSON.parse(saved);
-    } catch {
-      gameData = { money: 0, inventory: [] };
+    let random = Math.random() * totalChance;
+
+    for (const food of foods) {
+
+        random -= food.chance;
+
+        if (random <= 0) {
+            return food;
+        }
+
     }
-  } else {
-    gameData = { money: 0, inventory: [] };
-  }
-  updateUI();
+
+    return foods[0];
+
 }
 
-// ---------- Initialization ----------
-document.addEventListener("DOMContentLoaded", () => {
-  // wire auth buttons
-  document.getElementById("signupBtn").addEventListener("click", signup);
-  document.getElementById("loginBtn").addEventListener("click", login);
-  document.getElementById("logoutBtn").addEventListener("click", logout);
 
-  // coin click
-  document.getElementById("coin").addEventListener("click", () => {
-    gameData.money = (gameData.money || 0) + 1;
-    updateUI();
-    saveGame();
-  });
+// ===============================
+// COLLECT FOOD
+// ===============================
 
-  // render boxes
-  const boxContainer = document.getElementById("boxes");
-  boxContainer.innerHTML = "";
-  boxes.forEach((b, i) => {
-    const btn = document.createElement("button");
-    btn.textContent = `${b.name} - $${b.cost}`;
-    btn.addEventListener("click", () => buyBox(i));
-    boxContainer.appendChild(btn);
-  });
+collectButton.addEventListener("click", () => {
 
-  // autosave interval
-  setInterval(saveGame, AUTO_SAVE_INTERVAL_MS);
+    if (!pendingFood) {
+        return;
+    }
 
-  // save on unload
-  window.addEventListener("beforeunload", saveGame);
+    if (!collection.includes(pendingFood.name)) {
 
-  // Optional: if only one user exists and they have a saved session, do not auto-login.
-  // Keep auth visible by default.
+        collection.push(pendingFood.name);
+
+    }
+
+    pendingFood = null;
+
+    resultSection.classList.add("hidden");
+
+    updateCollection();
+
+    collectionGrid.scrollIntoView({
+        behavior: "smooth"
+    });
+
 });
+
+
+// ===============================
+// UPDATE COLLECTION
+// ===============================
+
+function updateCollection() {
+
+    collectionGrid.innerHTML = "";
+
+    totalFoods.textContent = foods.length;
+
+    collectionCount.textContent = collection.length;
+
+
+    foods.forEach(food => {
+
+        const card = document.createElement("div");
+
+        card.classList.add("food-card");
+
+
+        const collected = collection.includes(food.name);
+
+
+        if (!collected) {
+
+            card.classList.add("locked");
+
+        }
+
+
+        card.innerHTML = `
+
+            <div class="food-icon">
+                ${collected ? food.icon : "❓"}
+            </div>
+
+            <h3>
+                ${collected ? food.name : "Unknown Food"}
+            </h3>
+
+            <p>
+                ${collected ? food.rarity : "Not discovered"}
+            </p>
+
+        `;
+
+
+        collectionGrid.appendChild(card);
+
+    });
+
+}
+
+
+// ===============================
+// START GAME
+// ===============================
+
+updateCoins();
+updateCollection();

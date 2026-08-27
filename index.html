@@ -1,48 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Coin Clicker Game</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Collector</title>
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-  <main>
-    <section id="auth" class="card">
-      <h2>Login or Sign Up</h2>
-      <input id="username" type="text" placeholder="Username" autocomplete="username" />
-      <input id="password" type="password" placeholder="Password" autocomplete="current-password" />
-      <div class="row">
-        <button id="signupBtn">Sign Up</button>
-        <button id="loginBtn">Login</button>
-      </div>
-      <p id="authMessage" class="message"></p>
-    </section>
 
-    <section id="game" class="card" style="display:none;">
-      <header class="game-header">
-        <h1>💰 Coin Clicker</h1>
-        <div class="status">
-          <span>Player: <strong id="playerName">—</strong></span>
-          <button id="logoutBtn" class="small">Log Out</button>
+    <!-- Header -->
+    <header>
+        <h1>🍔 Food Collector</h1>
+
+        <div class="coins">
+            🪙 <span id="coinCount">0</span>
         </div>
-      </header>
+    </header>
 
-      <div class="center">
-        <p>Money: <span id="money">0</span></p>
-        <button id="coin" class="coin">Click Coin</button>
-      </div>
+    <!-- Main Game -->
+    <main>
 
-      <h2>🎁 Loot Boxes</h2>
-      <div id="boxes" class="boxes"></div>
+        <!-- Coin Section -->
+        <section class="coin-section">
+            <h2>Collect Coins</h2>
 
-      <h2>Inventory</h2>
-      <ul id="inventory" class="inventory"></ul>
+            <button id="coinButton" class="coin-button">
+                🪙
+            </button>
 
-      <p class="hint">Progress auto-saves every 5 seconds and when you leave the page.</p>
-    </section>
-  </main>
+            <p>Click the coin to earn money!</p>
+        </section>
 
-  <script src="script.js"></script>
+        <!-- Shop -->
+        <section class="shop-section">
+            <h2>📦 Box Shop</h2>
+
+            <div class="box-container">
+
+                <div class="box-card">
+                    <div class="box-icon">📦</div>
+                    <h3>Basic Food Box</h3>
+                    <p>Contains a random food!</p>
+                    <p class="price">🪙 25</p>
+
+                    <button class="buy-button" data-box="basic">
+                        Buy Box
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Box Opening -->
+        <section id="openingSection" class="opening-section hidden">
+
+            <h2>📦 Open Your Box!</h2>
+
+            <div id="boxDisplay" class="box-display">
+                📦
+            </div>
+
+            <button id="openButton" class="open-button">
+                Open Box
+            </button>
+
+        </section>
+
+        <!-- Result -->
+        <section id="resultSection" class="result-section hidden">
+
+            <h2>You Got!</h2>
+
+            <div id="foodResult" class="food-result">
+                🍔
+            </div>
+
+            <h3 id="foodName">Burger</h3>
+
+            <p id="foodRarity">Common</p>
+
+            <button id="collectButton">
+                Add to Collection
+            </button>
+
+        </section>
+
+        <!-- Collection -->
+        <section class="collection-section">
+
+            <h2>📖 Food Collection</h2>
+
+            <div class="collection-info">
+                <span id="collectionCount">0</span> / <span id="totalFoods">0</span>
+                Foods Collected
+            </div>
+
+            <div id="collectionGrid" class="collection-grid">
+                <!-- Foods will be generated here -->
+            </div>
+
+        </section>
+
+    </main>
+
+    <script src="script.js"></script>
+
 </body>
 </html>
