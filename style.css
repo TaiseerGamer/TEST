@@ -1,281 +1,205 @@
+:root {
+  --bg: #0f172a;
+  --card-bg: #1e293b;
+  --accent: #f59e0b;
+  --text: #f8fafc;
+  --muted: #64748b;
+}
+
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+  box-sizing: border-box;
+  user-select: none;
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, sans-serif;
 }
 
 body {
-    font-family: Arial, sans-serif;
-    background: #f4f6fb;
-    color: #222;
-    min-height: 100vh;
+  background-color: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
 }
 
 header {
-    background: #ffffff;
-    padding: 20px 40px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
-    position: sticky;
-    top: 0;
-    z-index: 10;
+  text-align: center;
+  margin-bottom: 24px;
 }
 
-header h1 {
-    font-size: 28px;
+h1 {
+  font-size: 2rem;
+  color: var(--accent);
+  margin-bottom: 8px;
 }
 
-.coins {
-    background: #fff4b8;
-    padding: 10px 20px;
-    border-radius: 30px;
-    font-size: 20px;
-    font-weight: bold;
+.stats {
+  font-size: 1.25rem;
+  font-weight: 600;
+  display: flex;
+  gap: 20px;
+  justify-content: center;
 }
 
-main {
-    max-width: 1100px;
-    margin: auto;
-    padding: 35px 20px;
+.game-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  width: 100%;
+  max-width: 800px;
 }
 
-section {
-    background: white;
-    border-radius: 20px;
-    padding: 30px;
-    margin-bottom: 30px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
 }
 
-section h2 {
-    margin-bottom: 20px;
-    text-align: center;
+.coin-btn {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  border: 4px solid #fbbf24;
+  background: radial-gradient(circle, #fef08a, #f59e0b);
+  font-size: 4rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 25px rgba(245, 158, 11, 0.3);
+  transition: transform 0.05s ease, box-shadow 0.1s ease;
 }
 
-/* Coin */
-
-.coin-section {
-    text-align: center;
-}
-
-.coin-button {
-    width: 180px;
-    height: 180px;
-    border: none;
-    border-radius: 50%;
-    background: #ffd83d;
-    font-size: 90px;
-    cursor: pointer;
-    box-shadow:
-        0 10px 0 #d7a900,
-        0 15px 25px rgba(0, 0, 0, 0.2);
-    transition: 0.1s;
-    user-select: none;
-}
-
-.coin-button:hover {
-    transform: scale(1.05);
-}
-
-.coin-button:active {
-    transform: translateY(8px);
-    box-shadow:
-        0 2px 0 #d7a900,
-        0 5px 10px rgba(0, 0, 0, 0.2);
-}
-
-.coin-section p {
-    margin-top: 20px;
-    color: #777;
-}
-
-/* Shop */
-
-.box-container {
-    display: flex;
-    justify-content: center;
+.coin-btn:active {
+  transform: scale(0.92);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
 }
 
 .box-card {
-    width: 280px;
-    text-align: center;
-    padding: 25px;
-    border: 2px solid #eee;
-    border-radius: 18px;
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid #334155;
 }
 
-.box-icon {
-    font-size: 80px;
-    margin-bottom: 10px;
+.buy-btn {
+  background-color: var(--accent);
+  color: #000;
+  font-weight: 700;
+  font-size: 1rem;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s, opacity 0.2s;
 }
 
-.box-card h3 {
-    margin-bottom: 10px;
+.buy-btn:hover {
+  background-color: #d97706;
 }
 
-.box-card p {
-    color: #777;
-    margin-bottom: 10px;
+.buy-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
-.box-card .price {
-    color: #d39b00;
-    font-weight: bold;
-    font-size: 20px;
+.display-box {
+  font-size: 3rem;
+  min-height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.buy-button,
-.open-button,
-#collectButton {
-    border: none;
-    padding: 12px 25px;
-    border-radius: 12px;
-    background: #4f7cff;
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.2s;
+/* Collection Grid */
+.collection-container {
+  width: 100%;
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #334155;
 }
 
-.buy-button:hover,
-.open-button:hover,
-#collectButton:hover {
-    transform: translateY(-2px);
-    filter: brightness(1.1);
+.collection-title {
+  font-size: 1.2rem;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
 }
 
-/* Opening */
-
-.opening-section {
-    text-align: center;
-}
-
-.box-display {
-    font-size: 130px;
-    margin: 20px;
-    animation: float 1.5s infinite ease-in-out;
-}
-
-.open-button {
-    background: #43b85c;
-}
-
-@keyframes float {
-    0%, 100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(-10px);
-    }
-}
-
-/* Result */
-
-.result-section {
-    text-align: center;
-}
-
-.food-result {
-    font-size: 110px;
-    margin: 20px;
-}
-
-#foodName {
-    font-size: 28px;
-    margin-bottom: 8px;
-}
-
-#foodRarity {
-    font-weight: bold;
-    color: #777;
-    margin-bottom: 20px;
-}
-
-#collectButton {
-    background: #8b55e8;
-}
-
-/* Collection */
-
-.collection-info {
-    text-align: center;
-    margin-bottom: 25px;
-    font-weight: bold;
-}
-
-.collection-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 15px;
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 12px;
 }
 
 .food-card {
-    border: 2px solid #eee;
-    border-radius: 15px;
-    padding: 18px;
-    text-align: center;
-    background: #fafafa;
+  background: #0f172a;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border: 2px solid #334155;
+  opacity: 0.35;
+  transition: all 0.2s ease;
 }
 
-.food-card .food-icon {
-    font-size: 55px;
-    margin-bottom: 8px;
+.food-card.unlocked {
+  opacity: 1;
 }
 
-.food-card h3 {
-    font-size: 16px;
+.food-icon {
+  font-size: 2.2rem;
+  margin-bottom: 4px;
 }
 
-.food-card p {
-    color: #777;
-    font-size: 13px;
-    margin-top: 5px;
+.food-name {
+  font-size: 0.85rem;
+  font-weight: 600;
 }
 
-.locked {
-    opacity: 0.45;
+.food-rarity {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-top: 4px;
+  padding: 2px 6px;
+  border-radius: 4px;
 }
 
-.locked .food-icon {
-    filter: grayscale(1);
+/* Rarities */
+.rarity-common { border-color: #94a3b8; }
+.food-card.unlocked.rarity-common { border-color: #94a3b8; }
+.rarity-common .food-rarity { background-color: #475569; color: #f8fafc; }
+
+.rarity-rare { border-color: #3b82f6; }
+.food-card.unlocked.rarity-rare { border-color: #3b82f6; }
+.rarity-rare .food-rarity { background-color: #1d4ed8; color: #f8fafc; }
+
+.rarity-epic { border-color: #a855f7; }
+.food-card.unlocked.rarity-epic { border-color: #a855f7; }
+.rarity-epic .food-rarity { background-color: #7e22ce; color: #f8fafc; }
+
+.rarity-legendary { border-color: #eab308; }
+.food-card.unlocked.rarity-legendary { border-color: #eab308; box-shadow: 0 0 10px rgba(234, 179, 8, 0.4); }
+.rarity-legendary .food-rarity { background-color: #a16207; color: #f8fafc; }
+
+@keyframes bounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.3); }
 }
 
-.hidden {
-    display: none;
-}
-
-/* Mobile */
-
-@media (max-width: 600px) {
-
-    header {
-        padding: 15px;
-    }
-
-    header h1 {
-        font-size: 20px;
-    }
-
-    .coins {
-        font-size: 16px;
-        padding: 8px 12px;
-    }
-
-    main {
-        padding: 20px 10px;
-    }
-
-    section {
-        padding: 20px;
-    }
-
-    .coin-button {
-        width: 150px;
-        height: 150px;
-        font-size: 75px;
-    }
+.animate-open {
+  animation: bounce 0.3s ease-in-out;
 }

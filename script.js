@@ -1,320 +1,102 @@
-// ===============================
-// FOOD COLLECTOR v0.0.0
-// ===============================
-
-// Coins
+// Game State
 let coins = 0;
+const boxCost = 15;
+const unlockedIds = new Set();
 
-// Currently owned box
-let ownedBox = null;
-
-// Food waiting to be collected
-let pendingFood = null;
-
-
-// ===============================
-// FOOD DATABASE
-// ===============================
-
-const foods = [
-
-    // Common
-    {
-        name: "Apple",
-        icon: "🍎",
-        rarity: "Common",
-        chance: 45
-    },
-
-    {
-        name: "Bread",
-        icon: "🍞",
-        rarity: "Common",
-        chance: 30
-    },
-
-    {
-        name: "Banana",
-        icon: "🍌",
-        rarity: "Common",
-        chance: 15
-    },
-
-    // Uncommon
-    {
-        name: "Burger",
-        icon: "🍔",
-        rarity: "Uncommon",
-        chance: 5
-    },
-
-    {
-        name: "Pizza",
-        icon: "🍕",
-        rarity: "Uncommon",
-        chance: 3
-    },
-
-    // Rare
-    {
-        name: "Sushi",
-        icon: "🍣",
-        rarity: "Rare",
-        chance: 1
-    },
-
-    {
-        name: "Donut",
-        icon: "🍩",
-        rarity: "Rare",
-        chance: 1
-    }
+// Food Database with weighted probabilities
+const FOOD_LIST = [
+  { id: 'apple', name: 'Apple', icon: '🍎', rarity: 'common', weight: 40 },
+  { id: 'banana', name: 'Banana', icon: '🍌', rarity: 'common', weight: 40 },
+  { id: 'cookie', name: 'Cookie', icon: '🍪', rarity: 'common', weight: 40 },
+  { id: 'carrot', name: 'Carrot', icon: '🥕', rarity: 'common', weight: 40 },
+  
+  { id: 'pizza', name: 'Pizza', icon: '🍕', rarity: 'rare', weight: 20 },
+  { id: 'burger', name: 'Burger', icon: '🍔', rarity: 'rare', weight: 20 },
+  { id: 'taco', name: 'Taco', icon: '🌮', rarity: 'rare', weight: 20 },
+  
+  { id: 'sushi', name: 'Sushi', icon: '🍣', rarity: 'epic', weight: 10 },
+  { id: 'ramen', name: 'Ramen', icon: '🍜', rarity: 'epic', weight: 10 },
+  
+  { id: 'cake', name: 'Birthday Cake', icon: '🎂', rarity: 'legendary', weight: 3 },
+  { id: 'lobster', name: 'Lobster', icon: '🦞', rarity: 'legendary', weight: 2 }
 ];
 
+// DOM Elements
+const coinCountEl = document.getElementById('coin-count');
+const coinBtn = document.getElementById('coin-btn');
+const buyBoxBtn = document.getElementById('buy-box-btn');
+const displayBox = document.getElementById('display-box');
+const collectionGrid = document.getElementById('collection-grid');
+const collectionTracker = document.getElementById('collection-tracker');
 
-// ===============================
-// COLLECTION
-// ===============================
-
-let collection = [];
-
-
-// ===============================
-// ELEMENTS
-// ===============================
-
-const coinButton = document.getElementById("coinButton");
-const coinCount = document.getElementById("coinCount");
-
-const buyButtons = document.querySelectorAll(".buy-button");
-
-const openingSection = document.getElementById("openingSection");
-const openButton = document.getElementById("openButton");
-
-const resultSection = document.getElementById("resultSection");
-
-const foodResult = document.getElementById("foodResult");
-const foodName = document.getElementById("foodName");
-const foodRarity = document.getElementById("foodRarity");
-
-const collectButton = document.getElementById("collectButton");
-
-const collectionGrid = document.getElementById("collectionGrid");
-
-const collectionCount = document.getElementById("collectionCount");
-const totalFoods = document.getElementById("totalFoods");
-
-
-// ===============================
-// COIN SYSTEM
-// ===============================
-
-coinButton.addEventListener("click", () => {
-
-    coins++;
-
-    updateCoins();
-
-});
-
-function updateCoins() {
-
-    coinCount.textContent = coins;
-
+// Initialize Collection Grid
+function renderGrid() {
+  collectionGrid.innerHTML = '';
+  FOOD_LIST.forEach(food => {
+    const isUnlocked = unlockedIds.has(food.id);
+    const card = document.createElement('div');
+    card.className = `food-card rarity-${food.rarity} ${isUnlocked ? 'unlocked' : ''}`;
+    card.id = `food-${food.id}`;
+    
+    card.innerHTML = `
+      <div class="food-icon">${isUnlocked ? food.icon : '❓'}</div>
+      <div class="food-name">${isUnlocked ? food.name : '???'}</div>
+      <div class="food-rarity">${food.rarity}</div>
+    `;
+    collectionGrid.appendChild(card);
+  });
+  updateTracker();
 }
 
-
-// ===============================
-// BUY BOX
-// ===============================
-
-buyButtons.forEach(button => {
-
-    button.addEventListener("click", () => {
-
-        const boxType = button.dataset.box;
-
-        if (boxType === "basic") {
-
-            buyBasicBox();
-
-        }
-
-    });
-
-});
-
-
-function buyBasicBox() {
-
-    const price = 25;
-
-    if (coins < price) {
-
-        alert("You don't have enough coins!");
-
-        return;
-
-    }
-
-    coins -= price;
-
-    updateCoins();
-
-    ownedBox = "basic";
-
-    openingSection.classList.remove("hidden");
-
-    openingSection.scrollIntoView({
-        behavior: "smooth"
-    });
-
+// Update UI Stats
+function updateUI() {
+  coinCountEl.textContent = coins;
+  buyBoxBtn.disabled = coins < boxCost;
 }
 
+function updateTracker() {
+  collectionTracker.textContent = `${unlockedIds.size} / ${FOOD_LIST.length}`;
+}
 
-// ===============================
-// OPEN BOX
-// ===============================
-
-openButton.addEventListener("click", () => {
-
-    if (!ownedBox) {
-        return;
-    }
-
-    pendingFood = getRandomFood();
-
-    foodResult.textContent = pendingFood.icon;
-    foodName.textContent = pendingFood.name;
-    foodRarity.textContent = pendingFood.rarity;
-
-    resultSection.classList.remove("hidden");
-
-    ownedBox = null;
-
-    openingSection.classList.add("hidden");
-
-    resultSection.scrollIntoView({
-        behavior: "smooth"
-    });
-
+// Earn Coins
+coinBtn.addEventListener('click', () => {
+  coins++;
+  updateUI();
 });
 
-
-// ===============================
-// RANDOM FOOD
-// ===============================
-
+// Loot Box Logic (Weighted Drop)
 function getRandomFood() {
+  const totalWeight = FOOD_LIST.reduce((sum, item) => sum + item.weight, 0);
+  let randomNum = Math.random() * totalWeight;
 
-    const totalChance = foods.reduce(
-        (total, food) => total + food.chance,
-        0
-    );
-
-    let random = Math.random() * totalChance;
-
-    for (const food of foods) {
-
-        random -= food.chance;
-
-        if (random <= 0) {
-            return food;
-        }
-
+  for (const food of FOOD_LIST) {
+    if (randomNum < food.weight) {
+      return food;
     }
-
-    return foods[0];
-
+    randomNum -= food.weight;
+  }
+  return FOOD_LIST[0];
 }
 
+// Open Box
+buyBoxBtn.addEventListener('click', () => {
+  if (coins < boxCost) return;
 
-// ===============================
-// COLLECT FOOD
-// ===============================
+  coins -= boxCost;
+  updateUI();
 
-collectButton.addEventListener("click", () => {
+  const pulledFood = getRandomFood();
+  unlockedIds.add(pulledFood.id);
 
-    if (!pendingFood) {
-        return;
-    }
+  // Animation & Reveal
+  displayBox.classList.remove('animate-open');
+  void displayBox.offsetWidth; // Trigger reflow
+  displayBox.textContent = pulledFood.icon;
+  displayBox.classList.add('animate-open');
 
-    if (!collection.includes(pendingFood.name)) {
-
-        collection.push(pendingFood.name);
-
-    }
-
-    pendingFood = null;
-
-    resultSection.classList.add("hidden");
-
-    updateCollection();
-
-    collectionGrid.scrollIntoView({
-        behavior: "smooth"
-    });
-
+  renderGrid();
 });
 
-
-// ===============================
-// UPDATE COLLECTION
-// ===============================
-
-function updateCollection() {
-
-    collectionGrid.innerHTML = "";
-
-    totalFoods.textContent = foods.length;
-
-    collectionCount.textContent = collection.length;
-
-
-    foods.forEach(food => {
-
-        const card = document.createElement("div");
-
-        card.classList.add("food-card");
-
-
-        const collected = collection.includes(food.name);
-
-
-        if (!collected) {
-
-            card.classList.add("locked");
-
-        }
-
-
-        card.innerHTML = `
-
-            <div class="food-icon">
-                ${collected ? food.icon : "❓"}
-            </div>
-
-            <h3>
-                ${collected ? food.name : "Unknown Food"}
-            </h3>
-
-            <p>
-                ${collected ? food.rarity : "Not discovered"}
-            </p>
-
-        `;
-
-
-        collectionGrid.appendChild(card);
-
-    });
-
-}
-
-
-// ===============================
-// START GAME
-// ===============================
-
-updateCoins();
-updateCollection();
+// Initial Setup
+renderGrid();
+updateUI();
