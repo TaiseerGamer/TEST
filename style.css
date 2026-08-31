@@ -1,205 +1,137 @@
 :root {
-  --bg: #0f172a;
-  --card-bg: #1e293b;
-  --accent: #f59e0b;
-  --text: #f8fafc;
-  --muted: #64748b;
-}
-
-* {
-  box-sizing: border-box;
-  user-select: none;
-  margin: 0;
-  padding: 0;
-  font-family: system-ui, -apple-system, sans-serif;
+    --bg-color: #1a1a2e;
+    --panel-bg: #16213e;
+    --accent-color: #0f3460;
+    --gold: #f5c518;
+    --text-color: #ffffff;
 }
 
 body {
-  background-color: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-header {
-  text-align: center;
-  margin-bottom: 24px;
-}
-
-h1 {
-  font-size: 2rem;
-  color: var(--accent);
-  margin-bottom: 8px;
+h1 { 
+    margin-bottom: 10px; 
 }
 
 .stats {
-  font-size: 1.25rem;
-  font-weight: 600;
-  display: flex;
-  gap: 20px;
-  justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: var(--gold);
+    font-weight: bold;
 }
 
-.game-layout {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 30px;
-  width: 100%;
-  max-width: 800px;
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    max-width: 900px;
+    width: 100%;
 }
 
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
-  align-items: center;
+.card {
+    background-color: var(--panel-bg);
+    border-radius: 12px;
+    padding: 20px;
+    flex: 1;
+    min-width: 250px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
 }
 
+/* Coin Styling */
 .coin-btn {
-  width: 130px;
-  height: 130px;
-  border-radius: 50%;
-  border: 4px solid #fbbf24;
-  background: radial-gradient(circle, #fef08a, #f59e0b);
-  font-size: 4rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 10px 25px rgba(245, 158, 11, 0.3);
-  transition: transform 0.05s ease, box-shadow 0.1s ease;
+    background: radial-gradient(circle, #ffe600 0%, #d4af37 100%);
+    border: 4px solid #b38f00;
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    font-size: 3rem;
+    cursor: pointer;
+    box-shadow: 0 6px 0 #8c7000;
+    transition: transform 0.05s, box-shadow 0.05s;
+    user-select: none;
+    outline: none;
+    margin: 20px 0;
 }
 
 .coin-btn:active {
-  transform: scale(0.92);
-  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 #8c7000;
 }
 
-.box-card {
-  background-color: var(--card-bg);
-  border-radius: 12px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  border: 1px solid #334155;
+/* Shop & Box Styling */
+.btn {
+    background-color: #e94560;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
 }
 
-.buy-btn {
-  background-color: var(--accent);
-  color: #000;
-  font-weight: 700;
-  font-size: 1rem;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.2s, opacity 0.2s;
+.btn:hover { 
+    background-color: #ff6b81; 
 }
 
-.buy-btn:hover {
-  background-color: #d97706;
+.btn:disabled { 
+    background-color: #555; 
+    cursor: not-allowed; 
 }
 
-.buy-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.display-box {
-  font-size: 3rem;
-  min-height: 70px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.box-display {
+    font-size: 4rem;
+    margin: 15px 0;
 }
 
 /* Collection Grid */
-.collection-container {
-  width: 100%;
-  background-color: var(--card-bg);
-  border-radius: 12px;
-  padding: 20px;
-  border: 1px solid #334155;
-}
-
-.collection-title {
-  font-size: 1.2rem;
-  margin-bottom: 16px;
-  display: flex;
-  justify-content: space-between;
-}
-
 .grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-  gap: 12px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 10px;
+    width: 100%;
+    margin-top: 10px;
 }
 
-.food-card {
-  background: #0f172a;
-  border-radius: 8px;
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  border: 2px solid #334155;
-  opacity: 0.35;
-  transition: all 0.2s ease;
+.food-item {
+    background-color: var(--accent-color);
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    opacity: 0.3;
+    transition: opacity 0.3s;
 }
 
-.food-card.unlocked {
-  opacity: 1;
+.food-item.unlocked {
+    opacity: 1;
+    background-color: #0f4c75;
 }
 
-.food-icon {
-  font-size: 2.2rem;
-  margin-bottom: 4px;
+.food-icon { 
+    font-size: 2rem; 
 }
 
-.food-name {
-  font-size: 0.85rem;
-  font-weight: 600;
+.food-name { 
+    font-size: 0.75rem; 
+    margin-top: 5px; 
 }
 
-.food-rarity {
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  margin-top: 4px;
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-
-/* Rarities */
-.rarity-common { border-color: #94a3b8; }
-.food-card.unlocked.rarity-common { border-color: #94a3b8; }
-.rarity-common .food-rarity { background-color: #475569; color: #f8fafc; }
-
-.rarity-rare { border-color: #3b82f6; }
-.food-card.unlocked.rarity-rare { border-color: #3b82f6; }
-.rarity-rare .food-rarity { background-color: #1d4ed8; color: #f8fafc; }
-
-.rarity-epic { border-color: #a855f7; }
-.food-card.unlocked.rarity-epic { border-color: #a855f7; }
-.rarity-epic .food-rarity { background-color: #7e22ce; color: #f8fafc; }
-
-.rarity-legendary { border-color: #eab308; }
-.food-card.unlocked.rarity-legendary { border-color: #eab308; box-shadow: 0 0 10px rgba(234, 179, 8, 0.4); }
-.rarity-legendary .food-rarity { background-color: #a16207; color: #f8fafc; }
-
-@keyframes bounce {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.3); }
-}
-
-.animate-open {
-  animation: bounce 0.3s ease-in-out;
+.food-count { 
+    font-size: 0.7rem; 
+    color: #aaa; 
 }

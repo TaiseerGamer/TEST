@@ -1,42 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Food Collector Clicker</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Collector Game</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <header>
     <h1>Food Collector</h1>
-    <div class="stats">
-      <div>🪙 Coins: <span id="coin-count">0</span></div>
+    <div class="stats">Coins: <span id="coin-count">0</span></div>
+
+    <div class="container">
+        <div class="card">
+            <h2>Click the Coin</h2>
+            <button class="coin-btn" id="coin-btn">🪙</button>
+            <p>Click to earn 1 coin!</p>
+        </div>
+
+        <div class="card">
+            <h2>Food Boxes</h2>
+            <div class="box-display">📦</div>
+            <p>Box Inventory: <span id="box-count">0</span></p>
+            <button class="btn" id="buy-box-btn">Buy Box (Cost: 10 Coins)</button>
+            <br>
+            <button class="btn" id="open-box-btn" style="background-color: #00b4d8;">Open 1 Box</button>
+        </div>
+
+        <div class="card" style="flex: 2;">
+            <h2>Food Collection (<span id="unlocked-count">0</span>/10)</h2>
+            <div class="grid" id="collection-grid"></div>
+        </div>
     </div>
-  </header>
 
-  <div class="game-layout">
-    <div class="actions">
-      <!-- Clickable Coin -->
-      <button class="coin-btn" id="coin-btn" title="Click to earn coins!">🪙</button>
-
-      <!-- Loot Box Section -->
-      <div class="box-card">
-        <div class="display-box" id="display-box">📦</div>
-        <button class="buy-btn" id="buy-box-btn">Open Box (15 Coins)</button>
-      </div>
-    </div>
-
-    <!-- Collection Area -->
-    <div class="collection-container">
-      <div class="collection-title">
-        <span>Food Collection</span>
-        <span id="collection-tracker">0 / 0</span>
-      </div>
-      <div class="grid" id="collection-grid"></div>
-    </div>
-  </div>
-
-  <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>

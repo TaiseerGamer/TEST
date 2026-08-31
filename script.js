@@ -1,102 +1,91 @@
 // Game State
 let coins = 0;
-const boxCost = 15;
-const unlockedIds = new Set();
+let boxes = 0;
+const boxCost = 10;
 
-// Food Database with weighted probabilities
-const FOOD_LIST = [
-  { id: 'apple', name: 'Apple', icon: '🍎', rarity: 'common', weight: 40 },
-  { id: 'banana', name: 'Banana', icon: '🍌', rarity: 'common', weight: 40 },
-  { id: 'cookie', name: 'Cookie', icon: '🍪', rarity: 'common', weight: 40 },
-  { id: 'carrot', name: 'Carrot', icon: '🥕', rarity: 'common', weight: 40 },
-  
-  { id: 'pizza', name: 'Pizza', icon: '🍕', rarity: 'rare', weight: 20 },
-  { id: 'burger', name: 'Burger', icon: '🍔', rarity: 'rare', weight: 20 },
-  { id: 'taco', name: 'Taco', icon: '🌮', rarity: 'rare', weight: 20 },
-  
-  { id: 'sushi', name: 'Sushi', icon: '🍣', rarity: 'epic', weight: 10 },
-  { id: 'ramen', name: 'Ramen', icon: '🍜', rarity: 'epic', weight: 10 },
-  
-  { id: 'cake', name: 'Birthday Cake', icon: '🎂', rarity: 'legendary', weight: 3 },
-  { id: 'lobster', name: 'Lobster', icon: '🦞', rarity: 'legendary', weight: 2 }
+const foods = [
+    { id: 'apple', name: 'Apple', icon: '🍎', count: 0 },
+    { id: 'banana', name: 'Banana', icon: '🍌', count: 0 },
+    { id: 'pizza', name: 'Pizza', icon: '🍕', count: 0 },
+    { id: 'burger', name: 'Burger', icon: '🍔', count: 0 },
+    { id: 'taco', name: 'Taco', icon: '🌮', count: 0 },
+    { id: 'donut', name: 'Donut', icon: '🍩', count: 0 },
+    { id: 'sushi', name: 'Sushi', icon: '🍣', count: 0 },
+    { id: 'ramen', name: 'Ramen', icon: '🍜', count: 0 },
+    { id: 'icecream', name: 'Ice Cream', icon: '🍦', count: 0 },
+    { id: 'cookie', name: 'Cookie', icon: '🍪', count: 0 }
 ];
 
-// DOM Elements
+// UI Elements
 const coinCountEl = document.getElementById('coin-count');
+const boxCountEl = document.getElementById('box-count');
+const unlockedCountEl = document.getElementById('unlocked-count');
 const coinBtn = document.getElementById('coin-btn');
 const buyBoxBtn = document.getElementById('buy-box-btn');
-const displayBox = document.getElementById('display-box');
+const openBoxBtn = document.getElementById('open-box-btn');
 const collectionGrid = document.getElementById('collection-grid');
-const collectionTracker = document.getElementById('collection-tracker');
 
-// Initialize Collection Grid
-function renderGrid() {
-  collectionGrid.innerHTML = '';
-  FOOD_LIST.forEach(food => {
-    const isUnlocked = unlockedIds.has(food.id);
-    const card = document.createElement('div');
-    card.className = `food-card rarity-${food.rarity} ${isUnlocked ? 'unlocked' : ''}`;
-    card.id = `food-${food.id}`;
-    
-    card.innerHTML = `
-      <div class="food-icon">${isUnlocked ? food.icon : '❓'}</div>
-      <div class="food-name">${isUnlocked ? food.name : '???'}</div>
-      <div class="food-rarity">${food.rarity}</div>
-    `;
-    collectionGrid.appendChild(card);
-  });
-  updateTracker();
-}
-
-// Update UI Stats
-function updateUI() {
-  coinCountEl.textContent = coins;
-  buyBoxBtn.disabled = coins < boxCost;
-}
-
-function updateTracker() {
-  collectionTracker.textContent = `${unlockedIds.size} / ${FOOD_LIST.length}`;
-}
-
-// Earn Coins
+// Click Coin
 coinBtn.addEventListener('click', () => {
-  coins++;
-  updateUI();
+    coins++;
+    updateUI();
 });
 
-// Loot Box Logic (Weighted Drop)
-function getRandomFood() {
-  const totalWeight = FOOD_LIST.reduce((sum, item) => sum + item.weight, 0);
-  let randomNum = Math.random() * totalWeight;
-
-  for (const food of FOOD_LIST) {
-    if (randomNum < food.weight) {
-      return food;
+// Buy Box
+buyBoxBtn.addEventListener('click', () => {
+    if (coins >= boxCost) {
+        coins -= boxCost;
+        boxes++;
+        updateUI();
     }
-    randomNum -= food.weight;
-  }
-  return FOOD_LIST[0];
-}
+});
 
 // Open Box
-buyBoxBtn.addEventListener('click', () => {
-  if (coins < boxCost) return;
+openBoxBtn.addEventListener('click', () => {
+    if (boxes > 0) {
+        boxes--;
+        
+        // Pick random food
+        const randomIndex = Math.floor(Math.random() * foods.length);
+        foods[randomIndex].count++;
 
-  coins -= boxCost;
-  updateUI();
-
-  const pulledFood = getRandomFood();
-  unlockedIds.add(pulledFood.id);
-
-  // Animation & Reveal
-  displayBox.classList.remove('animate-open');
-  void displayBox.offsetWidth; // Trigger reflow
-  displayBox.textContent = pulledFood.icon;
-  displayBox.classList.add('animate-open');
-
-  renderGrid();
+        updateUI();
+    }
 });
 
-// Initial Setup
-renderGrid();
+// Initialize Collection UI
+function renderCollection() {
+    collectionGrid.innerHTML = '';
+    let totalUnlocked = 0;
+
+    foods.forEach(food => {
+        const isUnlocked = food.count > 0;
+        if (isUnlocked) totalUnlocked++;
+
+        const foodEl = document.createElement('div');
+        foodEl.className = `food-item ${isUnlocked ? 'unlocked' : ''}`;
+        foodEl.innerHTML = `
+            <div class="food-icon">${isUnlocked ? food.icon : '❓'}</div>
+            <div class="food-name">${isUnlocked ? food.name : '???'}</div>
+            <div class="food-count">${isUnlocked ? 'x' + food.count : ''}</div>
+        `;
+        collectionGrid.appendChild(foodEl);
+    });
+
+    unlockedCountEl.textContent = totalUnlocked;
+}
+
+// Update Dynamic Displays
+function updateUI() {
+    coinCountEl.textContent = coins;
+    boxCountEl.textContent = boxes;
+    
+    // Enable/disable buttons based on state
+    buyBoxBtn.disabled = coins < boxCost;
+    openBoxBtn.disabled = boxes <= 0;
+
+    renderCollection();
+}
+
+// Initial setup
 updateUI();
