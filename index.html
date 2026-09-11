@@ -1,23 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Coin Clicker Food Boxes</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Snack Stash</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>🍀 Coin Clicker: Food Collector</h1>
-  <div id="game">
-    <button id="coin">💰 Click Coin</button>
-    <p>Money: $<span id="money">0</span></p>
 
-    <h2>Buy Boxes</h2>
-    <button onclick="buyBox('cheap')">Cheap Box ($10)</button>
-    <button onclick="buyBox('expensive')">Expensive Box ($50)</button>
+<div class="app">
 
-    <h2>Inventory</h2>
-    <ul id="inventory"></ul>
+  <header class="topbar">
+    <div class="brand"><span class="brand-coin">🪙</span> Snack Stash</div>
+    <div class="wallet">
+      <span class="wallet-icon">💰</span>
+      <span class="wallet-amount" id="moneyDisplay" aria-live="polite">$0</span>
+    </div>
+  </header>
+
+  <main>
+
+    <section class="hero">
+      <div class="coin-wrap">
+        <button class="coin" id="coinBtn" aria-label="Press the coin to earn money">
+          <span class="coin-face">🪙</span>
+        </button>
+        <div class="floaters" id="floaters" aria-hidden="true"></div>
+      </div>
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-value" id="clickPowerDisplay">$1</span>
+          <span class="stat-label">per press</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value" id="autoIncomeDisplay">$0</span>
+          <span class="stat-label">per second</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Kitchen upgrades</h2>
+      <div class="upgrade-grid">
+
+        <div class="upgrade-card">
+          <div class="upgrade-icon">💪</div>
+          <div class="upgrade-info">
+            <h3>Stronger press</h3>
+            <p id="clickUpgradeDesc">Earn more with every press</p>
+          </div>
+          <button class="btn buy-btn" id="clickUpgradeBtn" type="button">Upgrade</button>
+        </div>
+
+        <div class="upgrade-card">
+          <div class="upgrade-icon">👨‍🍳</div>
+          <div class="upgrade-info">
+            <h3>Hire a chef</h3>
+            <p id="autoUpgradeDesc">Money keeps coming in on its own</p>
+          </div>
+          <button class="btn buy-btn" id="autoUpgradeBtn" type="button">Hire</button>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Snack shop</h2>
+      <p class="panel-sub">Pricier boxes carry better luck for rare finds.</p>
+      <div class="box-grid" id="boxGrid"></div>
+    </section>
+
+    <section class="panel">
+      <div class="collection-header">
+        <div>
+          <h2>Collection</h2>
+          <p class="panel-sub" id="collectionProgress">0 of 28 foods found</p>
+        </div>
+        <button class="btn sell-btn" id="sellDuplicatesBtn" type="button">Sell duplicates</button>
+      </div>
+      <div class="food-grid" id="foodGrid"></div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <button class="reset-btn" id="resetBtn" type="button">Reset progress</button>
+  </footer>
+
+</div>
+
+<div class="overlay" id="boxOverlay">
+  <div class="reveal-stage">
+    <div class="reveal-box" id="revealBox">📦</div>
+    <div class="reveal-result" id="revealResult" hidden>
+      <div class="reveal-emoji" id="revealEmoji"></div>
+      <div class="reveal-name" id="revealName"></div>
+      <div class="reveal-rarity" id="revealRarity"></div>
+      <button class="btn" id="revealCloseBtn" type="button">Nice!</button>
+    </div>
   </div>
-  <script src="script.js"></script>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="script.js"></script>
 </body>
 </html>
