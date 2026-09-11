@@ -1,41 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Food Mystery Clicker</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Yummy Boxes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <div class="wrap">
+    <header>
+      <h1>Yummy Boxes <span>Tap the coin. Buy boxes. Collect foods!</span></h1>
+      <div class="wallet" aria-live="polite">🪙 <span id="money">0</span></div>
+    </header>
 
-  <header>
-    <h1>Food Mystery Clicker</h1>
-    <div class="stats-bar">$<span id="money-display">0</span></div>
-  </header>
+    <div class="grid">
+      <section class="card coin-stage">
+        <p class="hint">Press the coin to earn money</p>
+        <button class="coin" id="coin" aria-label="Press coin to get money">🪙</button>
+        <div class="stats">
+          <span class="pill">Clicks: <b id="clicks">0</b></span>
+          <span class="pill">Boxes: <b id="opened">0</b></span>
+          <span class="pill">Foods found: <b id="found">0</b>/<span id="totalFoods">0</span></span>
+        </div>
+      </section>
 
-  <div class="main-container">
-    <!-- Clicker -->
-    <div class="section">
-      <h2>Click for Money</h2>
-      <div class="coin-container">
-        <div class="coin" id="coin">🪙</div>
+      <section class="card">
+        <h2>Buy a box</h2>
+        <div class="shop" id="shop"></div>
+        <div class="reveal" id="reveal">Open a box to find a yummy food!</div>
+      </section>
+    </div>
+
+    <section class="card collection">
+      <div class="toolbar">
+        <h2 class="collection-title">Food collection</h2>
+        <button class="ghost" id="reset">Reset game</button>
       </div>
-      <p>Click the golden coin to earn $1</p>
-    </div>
-
-    <!-- Shop -->
-    <div class="section">
-      <h2>Box Shop</h2>
-      <div class="shop-boxes" id="shop-container"></div>
-      <div class="unboxed-result" id="result-display"></div>
-    </div>
-
-    <!-- Inventory -->
-    <div class="section">
-      <h2>Food Collection</h2>
-      <div class="inventory-grid" id="inventory-container"></div>
-    </div>
+      <div class="foods" id="foods"></div>
+    </section>
   </div>
+
+  <div class="toast" id="toast"></div>
+  <div class="confetti" id="confetti"></div>
 
   <script src="script.js"></script>
 </body>
