@@ -1,25 +1,121 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Coin & Crates</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coin & Crate - Food Collector</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <main class="game-shell">
-    <header class="topbar">
-      <div><p class="eyebrow">TAP • OPEN • COLLECT</p><h1>Coin & Crates</h1></div>
-      <div class="wallet"><span>💰</span><strong id="money">0</strong><small>coins</small></div>
+    <div class="bg-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <header class="top-bar">
+        <div class="logo">
+            <span class="logo-emoji">🍱</span>
+            <span>COIN & CRATE</span>
+        </div>
+        <div class="stats">
+            <div class="stat money-stat">
+                <span class="stat-icon">💰</span>
+                <span id="moneyDisplay">0</span>
+            </div>
+            <div class="stat collection-stat">
+                <span class="stat-icon">📚</span>
+                <span id="collectionDisplay">0 / 30</span>
+            </div>
+        </div>
     </header>
-    <section class="hero card">
-      <div class="coin-area"><button id="coinButton" class="coin" aria-label="Press the coin to earn money"><span>¢</span></button><p>Press the coin!</p><div id="floaters" class="floaters"></div></div>
-      <div class="stats"><div><span>Coins per tap</span><b id="tapPower">1</b></div><div><span>Foods collected</span><b id="foodCount">0</b></div><div><span>Best food</span><b id="bestFood">—</b></div></div>
+
+    <main class="game-layout">
+        <!-- LEFT: CLICKER -->
+        <section class="panel clicker-panel">
+            <h2>Tap the Coin!</h2>
+            <p class="panel-sub">Click to earn cash for crates</p>
+            
+            <div class="coin-wrap">
+                <div id="coinBtn" class="coin">
+                    <div class="coin-inner">
+                        <span class="coin-face">$</span>
+                    </div>
+                    <div class="coin-shine"></div>
+                </div>
+                <div id="floatContainer" class="float-container"></div>
+            </div>
+
+            <div class="click-info">
+                <div class="click-power"><span id="clickPower">+1</span> per tap</div>
+                <div class="streak" id="streakDisplay">Keep clicking! 🔥</div>
+            </div>
+
+            <div class="upgrade-row">
+                <button id="upgradeBtn" class="upgrade-btn">
+                    <span>⬆️ Upgrade Tap</span>
+                    <span class="upgrade-cost" id="upgradeCost">$100</span>
+                </button>
+                <div class="upgrade-desc">+1 more per click</div>
+            </div>
+        </section>
+
+        <!-- RIGHT: SHOP -->
+        <section class="panel shop-panel">
+            <h2>Crate Shop</h2>
+            <p class="panel-sub">Expensive crates have better luck!</p>
+            
+            <div class="boxes-grid" id="boxesGrid">
+                <!-- JS will inject boxes -->
+            </div>
+
+            <div class="luck-legend">
+                <div class="legend-title">Luck Rates</div>
+                <div class="legend-row">
+                    <span class="dot common"></span> Common
+                    <span class="dot uncommon"></span> Uncommon
+                    <span class="dot rare"></span> Rare
+                    <span class="dot epic"></span> Epic
+                    <span class="dot legendary"></span> Legendary
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- COLLECTION -->
+    <section class="panel collection-panel">
+        <div class="collection-header">
+            <h2>Food Collection</h2>
+            <div class="filter-tabs" id="filterTabs">
+                <button data-filter="all" class="active">All</button>
+                <button data-filter="common">Common</button>
+                <button data-filter="uncommon">Uncommon</button>
+                <button data-filter="rare">Rare</button>
+                <button data-filter="epic">Epic</button>
+                <button data-filter="legendary">Legendary</button>
+            </div>
+        </div>
+        <div class="collection-grid" id="collectionGrid"></div>
     </section>
-    <section><div class="section-heading"><div><p class="eyebrow">SPEND YOUR COINS</p><h2>Food boxes</h2></div><button id="resetButton" class="text-button">Reset game</button></div><div id="boxes" class="boxes"></div></section>
-    <section class="card collection"><div class="section-heading"><div><p class="eyebrow">YOUR COLLECTION</p><h2>Food shelf</h2></div><span id="collectionHint" class="hint">Open a box to start</span></div><div id="collection" class="collection-grid"></div></section>
-    <div id="toast" class="toast" role="status"></div>
-  </main>
-  <script src="script.js"></script>
+
+    <!-- OPENING MODAL -->
+    <div id="openModal" class="modal hidden">
+        <div class="modal-content">
+            <div id="crateAnim" class="crate-anim">📦</div>
+            <div id="revealArea" class="reveal-area hidden">
+                <div class="reveal-rarity" id="revealRarity">RARE</div>
+                <div class="reveal-emoji" id="revealEmoji">🍔</div>
+                <div class="reveal-name" id="revealName">Burger</div>
+                <div class="reveal-desc" id="revealDesc">A juicy classic</div>
+                <div id="revealNew" class="reveal-new">✨ NEW! ✨</div>
+            </div>
+            <button id="closeModalBtn" class="close-modal hidden">Continue</button>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="script.js"></script>
 </body>
 </html>
