@@ -1,25 +1,69 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Coin & Crates</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <main class="game-shell">
-    <header class="topbar">
-      <div><p class="eyebrow">TAP • OPEN • COLLECT</p><h1>Coin & Crates</h1></div>
-      <div class="wallet"><span>💰</span><strong id="money">0</strong><small>coins</small></div>
-    </header>
-    <section class="hero card">
-      <div class="coin-area"><button id="coinButton" class="coin" aria-label="Press the coin to earn money"><span>¢</span></button><p>Press the coin!</p><div id="floaters" class="floaters"></div></div>
-      <div class="stats"><div><span>Coins per tap</span><b id="tapPower">1</b></div><div><span>Foods collected</span><b id="foodCount">0</b></div><div><span>Best food</span><b id="bestFood">—</b></div></div>
-    </section>
-    <section><div class="section-heading"><div><p class="eyebrow">SPEND YOUR COINS</p><h2>Food boxes</h2></div><button id="resetButton" class="text-button">Reset game</button></div><div id="boxes" class="boxes"></div></section>
-    <section class="card collection"><div class="section-heading"><div><p class="eyebrow">YOUR COLLECTION</p><h2>Food shelf</h2></div><span id="collectionHint" class="hint">Open a box to start</span></div><div id="collection" class="collection-grid"></div></section>
-    <div id="toast" class="toast" role="status"></div>
-  </main>
-  <script src="script.js"></script>
-</body>
-</html>
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fredoka:wght@500;600&display=swap");
+
+:root {
+  --ink: #29251f;
+  --muted: #8d8478;
+  --cream: #fffaf1;
+  --orange: #f47a3b;
+  --yellow: #ffc94a;
+  --shadow: 0 18px 45px rgba(217, 201, 173, 0.33);
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; background: #f7efe2; color: var(--ink); font-family: "DM Sans", sans-serif; }
+button { font: inherit; border: 0; cursor: pointer; }
+.game-shell { width: min(calc(100% - 32px), 1040px); margin: 0 auto; padding: 42px 0 70px; }
+.topbar, .section-heading { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.eyebrow { margin: 0 0 7px; color: var(--orange); font-size: 11px; font-weight: 700; letter-spacing: 2px; }
+h1, h2 { margin: 0; font-family: "Fredoka", sans-serif; }
+h1 { font-size: 38px; }
+h2 { font-size: 25px; }
+.wallet { display: grid; grid-template-columns: auto auto; gap: 0 8px; align-items: center; min-width: 120px; padding: 12px 18px; border-radius: 18px; background: var(--ink); color: var(--cream); }
+.wallet span { grid-row: span 2; font-size: 25px; }
+.wallet strong { font-size: 21px; }
+.wallet small { color: #bbb0a3; font-size: 11px; }
+.card { border: 1px solid #fff; border-radius: 28px; background: var(--cream); box-shadow: var(--shadow); }
+.hero { display: grid; grid-template-columns: 1fr 1fr; align-items: center; min-height: 270px; margin: 34px 0 52px; padding: 26px; }
+.coin-area { position: relative; text-align: center; }
+.coin { position: relative; width: 150px; height: 150px; border-radius: 50%; background: radial-gradient(circle at 35% 28%, #ffe990, #ffc02f 62%, #e59b1c); color: #a56e12; font-family: Georgia, serif; font-size: 78px; box-shadow: inset -8px -10px 0 #df9d1f, 0 14px 0 #eacb86, 0 22px 35px rgba(201, 147, 60, 0.4); transition: transform 0.12s; }
+.coin:hover { transform: translateY(-4px); }
+.coin:active { transform: translateY(8px); box-shadow: inset -8px -10px 0 #df9d1f, 0 6px 0 #eacb86, 0 12px 20px rgba(201, 147, 60, 0.33); }
+.coin-area p { margin: 25px 0 0; font-weight: 700; }
+.floaters { position: absolute; inset: 0; pointer-events: none; }
+.floater { position: absolute; top: 25%; left: 50%; color: var(--orange); font-weight: 700; animation: rise 0.75s ease-out forwards; }
+@keyframes rise { to { transform: translate(-50%, -80px); opacity: 0; } }
+.stats { display: grid; gap: 14px; }
+.stats div { display: flex; align-items: center; justify-content: space-between; padding: 15px 18px; border-radius: 17px; background: #f8f0e3; }
+.stats span { color: var(--muted); font-size: 13px; }
+.stats b { font-size: 21px; }
+.section-heading { margin-bottom: 20px; }
+.text-button { background: transparent; color: var(--muted); font-size: 13px; }
+.boxes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-bottom: 42px; }
+.box { position: relative; overflow: hidden; padding: 23px; border: 1px solid #fff; border-radius: 22px; background: var(--cream); box-shadow: 0 8px 25px rgba(217, 201, 173, 0.21); }
+.box.featured { border: 2px solid var(--yellow); }
+.badge { position: absolute; top: 15px; right: 15px; padding: 5px 8px; border-radius: 9px; background: #fff0be; color: #9b7111; font-size: 10px; font-weight: 700; }
+.box-art { display: grid; place-items: center; height: 92px; margin-bottom: 17px; border-radius: 16px; background: #f8e7ca; font-size: 65px; }
+.box h3 { margin: 0 0 5px; font-size: 18px; }
+.box p { min-height: 33px; margin: 0 0 17px; color: var(--muted); font-size: 12px; }
+.buy { width: 100%; padding: 11px; border-radius: 12px; background: var(--ink); color: #fff; font-weight: 700; }
+.buy:disabled { opacity: 0.35; cursor: not-allowed; }
+.cost { color: var(--yellow); }
+.collection { padding: 25px; }
+.hint { color: var(--muted); font-size: 12px; }
+.collection-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; }
+.food { padding: 15px; border-radius: 16px; background: #f8f0e3; text-align: center; }
+.food .emoji { display: block; margin-bottom: 8px; font-size: 38px; }
+.food b { display: block; font-size: 13px; }
+.food small { color: var(--muted); font-size: 11px; }
+.empty { grid-column: 1 / -1; padding: 25px; color: var(--muted); text-align: center; }
+.toast { position: fixed; bottom: 25px; left: 50%; transform: translate(-50%, 20px); padding: 13px 18px; border-radius: 12px; background: var(--ink); color: #fff; opacity: 0; pointer-events: none; transition: 0.25s; }
+.toast.show { transform: translate(-50%, 0); opacity: 1; }
+
+@media (max-width: 700px) {
+  .game-shell { padding-top: 25px; }
+  .hero { grid-template-columns: 1fr; gap: 30px; padding: 22px; }
+  .boxes { grid-template-columns: 1fr; }
+  h1 { font-size: 31px; }
+  .wallet { min-width: 100px; }
+  .coin { width: 130px; height: 130px; font-size: 65px; }
+}
