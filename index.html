@@ -1,198 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Food Box Collector - v0.0.1</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Food Mystery Clicker - v0.0.1</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <header>
-        <h1>🍔 Food Box Collector</h1>
-        <p class="version">v0.0.1 • Patch Update</p>
+  <header>
+    <div class="header-top">
+      <h1>Food Mystery Clicker <span class="version-tag">v0.0.1</span></h1>
+      <button id="reset-btn" class="secondary-btn">Reset Save</button>
+    </div>
+    <div class="stats-bar">$<span id="money-display">0</span></div>
+  </header>
 
-        <div class="stats">
-            <div class="stat">
-                <span>💰 Money</span>
-                <strong id="money">$0</strong>
-            </div>
-
-            <div class="stat">
-                <span>🍴 Foods</span>
-                <strong id="collectionCount">0 / 20</strong>
-            </div>
-        </div>
-    </header>
-
-    <main>
-
-        <!-- Coin -->
-        <section class="coin-section">
-            <h2>Earn Money</h2>
-            <p>Click the coin to earn money!</p>
-
-            <div class="coin-wrapper">
-                <button id="coinButton" class="coin-button">
-                    🪙
-                </button>
-
-                <div id="coinParticles"></div>
-            </div>
-
-            <p class="coin-help">+ $1 per click</p>
-        </section>
-
-        <!-- Shop -->
-        <section class="shop-section">
-            <h2>📦 Box Shop</h2>
-            <p class="section-description">
-                More expensive boxes have better luck!
-            </p>
-
-            <div class="boxes">
-
-                <!-- Basic -->
-                <div class="box-card basic">
-                    <div class="box-icon">📦</div>
-
-                    <h3>Basic Box</h3>
-
-                    <p class="price">$25</p>
-
-                    <p class="luck">
-                        ⭐ Normal Luck
-                    </p>
-
-                    <button
-                        class="buy-button"
-                        data-box="basic">
-                        Buy Box
-                    </button>
-                </div>
-
-                <!-- Premium -->
-                <div class="box-card premium">
-                    <div class="box-icon">🎁</div>
-
-                    <h3>Premium Box</h3>
-
-                    <p class="price">$150</p>
-
-                    <p class="luck">
-                        ⭐⭐ Better Luck
-                    </p>
-
-                    <button
-                        class="buy-button"
-                        data-box="premium">
-                        Buy Box
-                    </button>
-                </div>
-
-                <!-- Legendary -->
-                <div class="box-card legendary">
-                    <div class="box-icon">👑</div>
-
-                    <h3>Legendary Box</h3>
-
-                    <p class="price">$1,000</p>
-
-                    <p class="luck">
-                        ⭐⭐⭐⭐⭐ Great Luck
-                    </p>
-
-                    <button
-                        class="buy-button"
-                        data-box="legendary">
-                        Buy Box
-                    </button>
-                </div>
-
-            </div>
-        </section>
-
-        <!-- Collection -->
-        <section class="collection-section">
-            <h2>📖 Food Collection</h2>
-
-            <p class="section-description">
-                Discover every food!
-            </p>
-
-            <div id="collection" class="collection"></div>
-        </section>
-
-    </main>
-
-    <!-- Opening Modal -->
-    <div id="modal" class="modal hidden">
-
-        <div class="modal-content">
-
-            <button
-                id="closeModal"
-                class="close-button">
-                ×
-            </button>
-
-            <div
-                id="openingBox"
-                class="opening-box">
-                📦
-            </div>
-
-            <p id="openingText">
-                Opening...
-            </p>
-
-            <div
-                id="result"
-                class="result hidden">
-
-                <div
-                    id="resultEmoji"
-                    class="result-emoji">
-                    🍔
-                </div>
-
-                <div
-                    id="newBadge"
-                    class="new-badge hidden">
-                    NEW!
-                </div>
-
-                <h2 id="resultName">
-                    Burger
-                </h2>
-
-                <p id="resultRarity">
-                    Common
-                </p>
-
-                <p id="resultOwned">
-                    Owned: 1
-                </p>
-
-            </div>
-
-            <button
-                id="openAgain"
-                class="open-again hidden">
-                Close
-            </button>
-
-        </div>
-
+  <div class="main-container">
+    <!-- Clicker Section -->
+    <div class="section">
+      <h2>Click for Money</h2>
+      <div class="coin-container">
+        <div class="coin" id="coin">🪙</div>
+      </div>
+      <p>Click the golden coin to earn $1</p>
     </div>
 
-    <!-- Notification -->
-    <div
-        id="notification"
-        class="notification">
-        Not enough money!
+    <!-- Shop Section -->
+    <div class="section">
+      <h2>Box Shop</h2>
+      <div class="shop-boxes" id="shop-container"></div>
+      <div class="unboxed-result" id="result-display"></div>
     </div>
 
-    <script src="script.js"></script>
+    <!-- Inventory Section -->
+    <div class="section">
+      <h2>Food Collection</h2>
+      <div class="inventory-grid" id="inventory-container"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
