@@ -1,71 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-  <title>Yummy Boxes v0.0.1</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <title>Coin Clicker: Food Collector v0.0.1</title>
+    style.css
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <div class="title-block">
-        <h1>Yummy Boxes <span>Tap the coin. Buy boxes. Collect foods!</span></h1>
-        <div class="title-meta">
-          <span class="version">v0.0.1</span>
-          <button class="ghost compact" id="patchNotes" type="button">What's new</button>
-        </div>
-      </div>
-      <div class="wallet" aria-live="polite">🪙 <span id="money">0</span></div>
-    </header>
 
-    <div class="grid">
-      <section class="card coin-stage">
-        <p class="hint">Press the coin to earn money</p>
-        <button class="coin" id="coin" aria-label="Press coin to get money">🪙</button>
-        <div class="stats">
-          <span class="pill">Clicks: <b id="clicks">0</b></span>
-          <span class="pill">Boxes: <b id="opened">0</b></span>
-          <span class="pill">Foods found: <b id="found">0</b>/<span id="totalFoods">0</span></span>
-        </div>
-      </section>
+    <h1>🍀 Coin Clicker: Food Collector</h1>
 
-      <section class="card">
-        <h2>Buy a box</h2>
-        <div class="shop" id="shop"></div>
-        <div class="reveal" id="reveal">Open a box to find a yummy food!</div>
-      </section>
+    <div id="game">
+        <button id="coin">💰 Click Coin</button>
+
+        <p>Money: $<span id="money">0</span></p>
+        <p>Foods Collected: <span id="foodCount">0</span></p>
+
+        <p id="result">Open a box to get food!</p>
+
+        <h2>📦 Buy Boxes</h2>
+
+        <button onclick="buyBox('cheap')">
+            Cheap Box ($8)
+        </button>
+
+        <button onclick="buyBox('expensive')">
+            Expensive Box ($45)
+        </button>
+
+        <h2>🎒 Inventory</h2>
+        <ul id="inventory"></ul>
     </div>
 
-    <section class="card collection">
-      <div class="toolbar">
-        <h2 class="collection-title">Food collection</h2>
-        <button class="ghost" id="reset">Reset game</button>
-      </div>
-      <div class="foods" id="foods"></div>
-    </section>
-  </div>
-
-  <div class="toast" id="toast"></div>
-  <div class="confetti" id="confetti"></div>
-
-  <div class="modal-back" id="patchModal" hidden>
-    <div class="modal" role="dialog" aria-labelledby="patchTitle">
-      <h2 id="patchTitle">Patch Notes — v0.0.1</h2>
-      <p class="modal-sub">A small kitchen fix-up</p>
-      <ul class="notes">
-        <li>Duplicate foods now give a small coin refund.</li>
-        <li>Every 10th coin tap is a lucky tap and pays extra.</li>
-        <li>Shop buttons show how many coins you still need.</li>
-        <li>Your last opened food stays after a refresh.</li>
-        <li>You can press Space or Enter to tap the coin.</li>
-      </ul>
-      <button class="ghost" id="closePatch" type="button">Got it</button>
-    </div>
-  </div>
-
-  <script src="script.js"></script>
+    script.jsscript>
 </body>
 </html>
