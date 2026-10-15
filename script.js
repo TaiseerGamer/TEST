@@ -1,480 +1,527 @@
-// ---------- Data ----------
 
-const RARITIES = {
-  common:    { label: "Common",    color: "#93a399", sellPrice: 5 },
-  uncommon:  { label: "Uncommon",  color: "#5c8a52", sellPrice: 15 },
-  rare:      { label: "Rare",      color: "#3e7cb1", sellPrice: 50 },
-  epic:      { label: "Epic",      color: "#8b5fbf", sellPrice: 150 },
-  legendary: { label: "Legendary", color: "#e8a93b", sellPrice: 500 },
-  mythic:    { label: "Mythic",    color: "#d6476b", sellPrice: 1500 },
-};
-
-const RARITY_ORDER = ["common", "uncommon", "rare", "epic", "legendary", "mythic"];
-
-const FOODS = [
-  // common
-  { id: "apple",   name: "Apple",       emoji: "🍎", rarity: "common" },
-  { id: "bread",   name: "Bread Slice", emoji: "🍞", rarity: "common" },
-  { id: "egg",     name: "Boiled Egg",  emoji: "🥚", rarity: "common" },
-  { id: "carrot",  name: "Carrot",      emoji: "🥕", rarity: "common" },
-  { id: "banana",  name: "Banana",      emoji: "🍌", rarity: "common" },
-  { id: "rice",    name: "Rice Bowl",   emoji: "🍚", rarity: "common" },
-  // uncommon
-  { id: "cheese",    name: "Cheese Wedge", emoji: "🧀", rarity: "uncommon" },
-  { id: "sandwich",  name: "Sandwich",     emoji: "🥪", rarity: "uncommon" },
-  { id: "pretzel",   name: "Pretzel",      emoji: "🥨", rarity: "uncommon" },
-  { id: "popcorn",   name: "Popcorn",      emoji: "🍿", rarity: "uncommon" },
-  { id: "taco",      name: "Taco",         emoji: "🌮", rarity: "uncommon" },
-  // rare
-  { id: "sushi",   name: "Sushi Roll", emoji: "🍣", rarity: "rare" },
-  { id: "burger",  name: "Burger",     emoji: "🍔", rarity: "rare" },
-  { id: "pizza",   name: "Pizza Slice",emoji: "🍕", rarity: "rare" },
-  { id: "steak",   name: "Steak",      emoji: "🥩", rarity: "rare" },
-  { id: "pasta",   name: "Pasta",      emoji: "🍝", rarity: "rare" },
-  // epic
-  { id: "lobster", name: "Lobster Tail",  emoji: "🦞", rarity: "epic" },
-  { id: "ramen",   name: "Ramen Deluxe",  emoji: "🍜", rarity: "epic" },
-  { id: "paella",  name: "Paella",        emoji: "🥘", rarity: "epic" },
-  { id: "hotpot",  name: "Hot Pot",       emoji: "🍲", rarity: "epic" },
-  { id: "sundae",  name: "Sundae",        emoji: "🍨", rarity: "epic" },
-  // legendary
-  { id: "cake",    name: "Rainbow Cake",   emoji: "🎂", rarity: "legendary" },
-  { id: "crab",    name: "Golden Crab",    emoji: "🦀", rarity: "legendary" },
-  { id: "feast",   name: "Royal Feast",    emoji: "🍱", rarity: "legendary" },
-  { id: "caviar",  name: "Caviar Platter", emoji: "🐟", rarity: "legendary" },
-  // mythic
-  { id: "pie",     name: "Cosmic Pie",       emoji: "🥧", rarity: "mythic" },
-  { id: "phoenix", name: "Phoenix Roast",    emoji: "🔥", rarity: "mythic" },
-  { id: "ambrosia",name: "Ambrosia Nectar",  emoji: "🍯", rarity: "mythic" },
-];
-
-const BOXES = [
-  {
-    id: "paper", name: "Paper Bag", emoji: "🛍️", price: 15,
-    odds: { common: 62, uncommon: 28, rare: 9, epic: 1, legendary: 0, mythic: 0 },
-  },
-  {
-    id: "crate", name: "Wooden Crate", emoji: "📦", price: 75,
-    odds: { common: 38, uncommon: 35, rare: 21, epic: 5, legendary: 1, mythic: 0 },
-  },
-  {
-    id: "tin", name: "Tin Box", emoji: "🥫", price: 300,
-    odds: { common: 18, uncommon: 30, rare: 32, epic: 15, legendary: 4, mythic: 1 },
-  },
-  {
-    id: "golden", name: "Golden Chest", emoji: "🎁", price: 1200,
-    odds: { common: 4, uncommon: 13, rare: 30, epic: 32, legendary: 18, mythic: 3 },
-  },
-  {
-    id: "diamond", name: "Diamond Cooler", emoji: "💎", price: 6000,
-    odds: { common: 0, uncommon: 4, rare: 14, epic: 30, legendary: 37, mythic: 15 },
-  },
-];
-
-const SAVE_KEY = "snackStashSave";
-const VERSION = "v0.0.1";
-
-// ---------- State ----------
-
-let state = {
-  money: 0,
-  clickPower: 1,
-  clickLevel: 0,
-  autoIncome: 0,
-  autoLevel: 0,
-  boxesOpened: 0,
-  collection: {}, // foodId -> count
-};
-
-function clickUpgradeCost() {
-  return Math.round(50 * Math.pow(1.6, state.clickLevel));
-}
-
-function autoUpgradeCost() {
-  return Math.round(200 * Math.pow(1.7, state.autoLevel));
-}
-
-// ---------- Save / Load ----------
-
-function saveGame() {
-  try {
-    localStorage.setItem(SAVE_KEY, JSON.stringify(state));
-  } catch (e) {
-    // storage unavailable, ignore
-  }
-}
-
-function loadGame() {
-  try {
-    const raw = localStorage.getItem(SAVE_KEY);
-    if (!raw) return;
-    const saved = JSON.parse(raw);
-    state = Object.assign({}, state, saved, {
-      collection: Object.assign({}, saved.collection || {}),
-    });
-  } catch (e) {
-    // corrupt save, ignore
-  }
-}
-
-// ---------- DOM refs ----------
-
-const moneyDisplay = document.getElementById("moneyDisplay");
-const clickPowerDisplay = document.getElementById("clickPowerDisplay");
-const autoIncomeDisplay = document.getElementById("autoIncomeDisplay");
-const coinBtn = document.getElementById("coinBtn");
-const floaters = document.getElementById("floaters");
-
-const clickUpgradeBtn = document.getElementById("clickUpgradeBtn");
-const clickUpgradeDesc = document.getElementById("clickUpgradeDesc");
-const autoUpgradeBtn = document.getElementById("autoUpgradeBtn");
-const autoUpgradeDesc = document.getElementById("autoUpgradeDesc");
-
-const boxGrid = document.getElementById("boxGrid");
-const foodGrid = document.getElementById("foodGrid");
-const collectionProgress = document.getElementById("collectionProgress");
-const sellDuplicatesBtn = document.getElementById("sellDuplicatesBtn");
-
-const boxOverlay = document.getElementById("boxOverlay");
-const revealBox = document.getElementById("revealBox");
-const revealResult = document.getElementById("revealResult");
-const revealEmoji = document.getElementById("revealEmoji");
-const revealName = document.getElementById("revealName");
-const revealRarity = document.getElementById("revealRarity");
-const revealCloseBtn = document.getElementById("revealCloseBtn");
-
-const toast = document.getElementById("toast");
-
-let toastTimer = null;
-let overlayBusy = false;
-
-// ---------- Helpers ----------
-
-const COMPACT_UNITS = [
-  { value: 1e12, suffix: "T" },
-  { value: 1e9, suffix: "B" },
-  { value: 1e6, suffix: "M" },
-  { value: 1e3, suffix: "K" },
-];
-
-function formatMoney(n) {
-  const floored = Math.floor(n);
-  const abs = Math.abs(floored);
-  if (abs < 100000) return "$" + floored.toLocaleString();
-  for (const u of COMPACT_UNITS) {
-    if (abs >= u.value) {
-      return "$" + (floored / u.value).toFixed(1).replace(/\.0$/, "") + u.suffix;
-    }
-  }
-  return "$" + floored.toLocaleString();
-}
-
-function showToast(message) {
-  toast.textContent = message;
-  toast.classList.add("show");
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toast.classList.remove("show"), 2400);
-}
-
-function pulseWallet() {
-  moneyDisplay.classList.remove("pulse");
-  // force reflow so the animation can retrigger
-  void moneyDisplay.offsetWidth;
-  moneyDisplay.classList.add("pulse");
-}
-
-function shakeButton(el) {
-  el.classList.remove("shake");
-  void el.offsetWidth;
-  el.classList.add("shake");
-}
-
-// ---------- Rendering ----------
-
-function render() {
-  moneyDisplay.textContent = formatMoney(state.money);
-  clickPowerDisplay.textContent = formatMoney(state.clickPower);
-  autoIncomeDisplay.textContent = formatMoney(state.autoIncome);
-
-  const cCost = clickUpgradeCost();
-  clickUpgradeDesc.textContent = `+$1 per press (now $${state.clickPower})`;
-  clickUpgradeBtn.textContent = `Upgrade — ${formatMoney(cCost)}`;
-  clickUpgradeBtn.classList.toggle("unaffordable", state.money < cCost);
-
-  const aCost = autoUpgradeCost();
-  autoUpgradeDesc.textContent = `+$1 per second (now $${state.autoIncome}/s)`;
-  autoUpgradeBtn.textContent = `Hire — ${formatMoney(aCost)}`;
-  autoUpgradeBtn.classList.toggle("unaffordable", state.money < aCost);
-
-  renderBoxes();
-  renderCollection();
-}
-
-function renderBoxes() {
-  boxGrid.innerHTML = "";
-  BOXES.forEach((box) => {
-    const card = document.createElement("div");
-    card.className = "box-card";
-
-    const oddsRows = RARITY_ORDER
-      .filter((r) => box.odds[r] > 0)
-      .map((r) => {
-        const info = RARITIES[r];
-        return `<div class="odds-row">
-          <span><span class="odds-dot" style="background:${info.color}"></span>${info.label}</span>
-          <span>${box.odds[r]}%</span>
-        </div>`;
-      })
-      .join("");
-
-    card.innerHTML = `
-      <div class="box-emoji">${box.emoji}</div>
-      <div class="box-name">${box.name}</div>
-      <div class="box-price">${formatMoney(box.price)}</div>
-      <details class="box-odds">
-        <summary>Odds</summary>
-        ${oddsRows}
-      </details>
-      <button class="btn box-buy-btn" type="button">Open</button>
-    `;
-
-    const buyBtn = card.querySelector(".box-buy-btn");
-    buyBtn.classList.toggle("unaffordable", state.money < box.price);
-    buyBtn.addEventListener("click", () => openBox(box));
-
-    boxGrid.appendChild(card);
-  });
-}
-
-function renderCollection() {
-  foodGrid.innerHTML = "";
-  let discoveredCount = 0;
-
-  const sorted = [...FOODS].sort(
-    (a, b) => RARITY_ORDER.indexOf(a.rarity) - RARITY_ORDER.indexOf(b.rarity)
-  );
-
-  sorted.forEach((food) => {
-    const count = state.collection[food.id] || 0;
-    const info = RARITIES[food.rarity];
-    const slot = document.createElement("div");
-    slot.className = "food-slot " + (count > 0 ? "discovered" : "locked");
-    if (count > 0) {
-      slot.style.setProperty("--slot-color", info.color);
-      discoveredCount++;
-      slot.innerHTML = `
-        <span class="food-emoji">${food.emoji}</span>
-        <span class="food-name">${food.name}</span>
-        ${count > 1 ? `<span class="food-count">x${count}</span>` : ""}
-      `;
-    } else {
-      slot.innerHTML = `
-        <span class="food-emoji">❓</span>
-        <span class="food-name">???</span>
-      `;
-    }
-    foodGrid.appendChild(slot);
-  });
-
-  collectionProgress.textContent = `${discoveredCount} of ${FOODS.length} foods found`;
-}
-
-// ---------- Coin click ----------
-
-function spawnFloater(text) {
-  const el = document.createElement("span");
-  el.className = "floater";
-  el.textContent = text;
-  const x = 50 + (Math.random() * 30 - 15);
-  el.style.left = x + "%";
-  el.style.top = "40%";
-  floaters.appendChild(el);
-  setTimeout(() => el.remove(), 900);
-}
-
-coinBtn.addEventListener("click", () => {
-  state.money += state.clickPower;
-  spawnFloater("+" + formatMoney(state.clickPower));
-
-  coinBtn.classList.remove("pressed");
-  void coinBtn.offsetWidth;
-  coinBtn.classList.add("pressed");
-
-  render();
-  saveGame();
-});
-
-// ---------- Upgrades ----------
-
-clickUpgradeBtn.addEventListener("click", () => {
-  const cost = clickUpgradeCost();
-  if (state.money < cost) {
-    shakeButton(clickUpgradeBtn);
-    showToast("Not enough money for that upgrade yet.");
-    return;
-  }
-  state.money -= cost;
-  state.clickPower += 1;
-  state.clickLevel += 1;
-  render();
-  saveGame();
-});
-
-autoUpgradeBtn.addEventListener("click", () => {
-  const cost = autoUpgradeCost();
-  if (state.money < cost) {
-    shakeButton(autoUpgradeBtn);
-    showToast("Not enough money to hire yet.");
-    return;
-  }
-  state.money -= cost;
-  state.autoIncome += 1;
-  state.autoLevel += 1;
-  render();
-  saveGame();
-});
-
-setInterval(() => {
-  if (state.autoIncome > 0) {
-    state.money += state.autoIncome;
-    pulseWallet();
-    render();
-    saveGame();
-  }
-}, 1000);
-
-// ---------- Box opening ----------
-
-function pickRarity(odds) {
-  const total = RARITY_ORDER.reduce((sum, r) => sum + (odds[r] || 0), 0);
-  let roll = Math.random() * total;
-  for (const r of RARITY_ORDER) {
-    const weight = odds[r] || 0;
-    if (roll < weight) return r;
-    roll -= weight;
-  }
-  return RARITY_ORDER[0];
-}
-
-function pickFood(rarity) {
-  const pool = FOODS.filter((f) => f.rarity === rarity);
-  return pool[Math.floor(Math.random() * pool.length)];
-}
-
-function openBox(box) {
-  if (overlayBusy) return;
-  if (state.money < box.price) {
-    const btn = [...boxGrid.querySelectorAll(".box-card")].find(
-      (card) => card.querySelector(".box-name").textContent === box.name
-    );
-    if (btn) shakeButton(btn.querySelector(".box-buy-btn"));
-    showToast("Not enough money for that box yet.");
-    return;
-  }
-
-  state.money -= box.price;
-  state.boxesOpened += 1;
-  render();
-  saveGame();
-
-  overlayBusy = true;
-  boxGrid.classList.add("grid-busy");
-  boxOverlay.classList.add("open");
-  revealResult.hidden = true;
-  revealBox.hidden = false;
-  revealBox.textContent = box.emoji;
-  revealBox.classList.remove("shaking");
-  void revealBox.offsetWidth;
-  revealBox.classList.add("shaking");
-
-  setTimeout(() => {
-    const rarity = pickRarity(box.odds);
-    const food = pickFood(rarity);
-    const info = RARITIES[rarity];
-
-    state.collection[food.id] = (state.collection[food.id] || 0) + 1;
-    render();
-    saveGame();
-
-    revealBox.hidden = true;
-    revealEmoji.textContent = food.emoji;
-    revealName.textContent = food.name;
-    revealRarity.textContent = info.label;
-    revealRarity.style.setProperty("--rarity-color", info.color);
-    revealRarity.style.color = info.color;
-    revealResult.hidden = false;
-
-    if (rarity === "epic" || rarity === "legendary" || rarity === "mythic") {
-      showToast(`${info.label} find: ${food.name}!`);
-    }
-  }, 650);
-}
-
-function closeReveal() {
-  boxOverlay.classList.remove("open");
-  boxGrid.classList.remove("grid-busy");
-  overlayBusy = false;
-}
-
-revealCloseBtn.addEventListener("click", closeReveal);
-
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && boxOverlay.classList.contains("open") && !revealResult.hidden) {
-    closeReveal();
-  }
-});
-
-// ---------- Sell duplicates ----------
-
-sellDuplicatesBtn.addEventListener("click", () => {
-  let earned = 0;
-  let itemsSold = 0;
-
-  Object.keys(state.collection).forEach((foodId) => {
-    const count = state.collection[foodId];
-    if (count > 1) {
-      const food = FOODS.find((f) => f.id === foodId);
-      if (!food) return;
-      const extra = count - 1;
-      earned += extra * RARITIES[food.rarity].sellPrice;
-      itemsSold += extra;
-      state.collection[foodId] = 1;
-    }
-  });
-
-  if (itemsSold === 0) {
-    showToast("No duplicates to sell right now.");
-    return;
-  }
-
-  state.money += earned;
-  showToast(`Sold ${itemsSold} duplicate${itemsSold === 1 ? "" : "s"} for ${formatMoney(earned)}.`);
-  render();
-  saveGame();
-});
-
-// ---------- Reset ----------
-
-document.getElementById("resetBtn").addEventListener("click", () => {
-  const sure = confirm("Reset all progress? This cannot be undone.");
-  if (!sure) return;
-  closeReveal();
-  state = {
-    money: 0,
-    clickPower: 1,
-    clickLevel: 0,
-    autoIncome: 0,
-    autoLevel: 0,
-    boxesOpened: 0,
-    collection: {},
+(() => {
+  const $ = s => document.querySelector(s);
+  const $$ = s => [...document.querySelectorAll(s)];
+
+  const settings = {
+    easy:   {rings:2, gap:.72, speed:1.05, blockers:0},
+    normal: {rings:3, gap:.52, speed:1, blockers:1},
+    hard:   {rings:4, gap:.38, speed:.94, blockers:3},
+    expert: {rings:5, gap:.28, speed:.88, blockers:5}
   };
-  saveGame();
-  render();
-  showToast("Progress reset.");
-});
 
-// ---------- Init ----------
+  let difficulty = 'easy';
+  let level = 1;
+  let falls = 0;
+  let elapsed = 0;
+  let last = performance.now();
+  let running = true;
+  let keys = {};
+  let buttons = {};
+  let walls = [];
+  let blockers = [];
+  let mazeGroup, ball, goal;
+  let progress = 0;
+  let toastTimer;
 
-document.getElementById("versionTag").textContent = VERSION;
-loadGame();
-render();
+  const R = 4.2;
+  const ballR = .15;
+  const ballVel = new THREE.Vector2();
+  const ballPos = new THREE.Vector2();
+
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x0c1425);
+  scene.fog = new THREE.Fog(0x0c1425, 10, 24);
+
+  const camera = new THREE.PerspectiveCamera(42, 1, .1, 100);
+  camera.position.set(0, 7.8, 10.8);
+  camera.lookAt(0, 0, 0);
+
+  const renderer = new THREE.WebGLRenderer({antialias:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.15;
+  $('.canvas-wrap').appendChild(renderer.domElement);
+
+  scene.add(new THREE.HemisphereLight(0xbfdcff, 0x15203b, 2));
+
+  const light = new THREE.DirectionalLight(0xffffff, 3.2);
+  light.position.set(-4, 8, 5);
+  light.castShadow = true;
+  scene.add(light);
+
+  const rimLight = new THREE.PointLight(0x37dcca, 28, 18);
+  rimLight.position.set(4, 3, -4);
+  scene.add(rimLight);
+
+  const floor = new THREE.Mesh(
+    new THREE.CircleGeometry(20, 80),
+    new THREE.MeshStandardMaterial({
+      color:0x0c1425,
+      roughness:.85
+    })
+  );
+  floor.rotation.x = -Math.PI / 2;
+  floor.position.y = -1.2;
+  scene.add(floor);
+
+  function mat(color, metalness=.25, roughness=.4, emissive=0) {
+    return new THREE.MeshStandardMaterial({
+      color,
+      metalness,
+      roughness,
+      emissive,
+      emissiveIntensity: emissive ? 1.1 : 0
+    });
+  }
+
+  const wallMat = mat(0x617bff, .55, .28, 0x182b85);
+  const baseMat = mat(0x243755, .4, .5);
+  const goldMat = mat(0xffc76a, .45, .25, 0x8e4a05);
+  const ballMat = mat(0x4fffe0, .3, .2, 0x087f78);
+
+  function makeMaze() {
+    if (mazeGroup) scene.remove(mazeGroup);
+
+    mazeGroup = new THREE.Group();
+    scene.add(mazeGroup);
+
+    walls = [];
+    blockers = [];
+
+    const cfg = settings[difficulty];
+    const rings = cfg.rings +
+      (level > 1 ? Math.min(2, Math.floor((level-1)/2)) : 0);
+
+    // Translucent spherical shell.
+    const shell = new THREE.Mesh(
+      new THREE.SphereGeometry(
+        R, 64, 40, 0, Math.PI*2, 0, Math.PI*.5
+      ),
+      new THREE.MeshStandardMaterial({
+        color:0x1b3150,
+        metalness:.3,
+        roughness:.5,
+        transparent:true,
+        opacity:.18,
+        side:THREE.DoubleSide
+      })
+    );
+
+    shell.scale.y = .8;
+    shell.position.y = -.2;
+    mazeGroup.add(shell);
+
+    // Maze floor.
+    const disc = new THREE.Mesh(
+      new THREE.CircleGeometry(R, 96),
+      baseMat
+    );
+
+    disc.rotation.x = -Math.PI/2;
+    disc.position.y = -.05;
+    mazeGroup.add(disc);
+
+    // Outer rim.
+    const rim = new THREE.Mesh(
+      new THREE.TorusGeometry(R, .14, 10, 100),
+      mat(0x3b5478, .6, .3)
+    );
+
+    rim.rotation.x = Math.PI/2;
+    rim.position.y = .02;
+    mazeGroup.add(rim);
+
+    // Create obstacle rings with gaps.
+    for (let i = 1; i <= rings; i++) {
+      const radius = R * (i/(rings+1));
+      const segments = 90;
+
+      const gapCenter =
+        (i%2===0 ? Math.PI*.5 : Math.PI*1.5) +
+        (level-1)*.19;
+
+      const gapWidth = cfg.gap * (1+(i===1?.18:0));
+
+      for (let j = 0; j < segments; j++) {
+        const angle = j/segments * Math.PI*2;
+
+        const diff = Math.atan2(
+          Math.sin(angle-gapCenter),
+          Math.cos(angle-gapCenter)
+        );
+
+        if (Math.abs(diff) < gapWidth/2) continue;
+
+        const x = Math.cos(angle)*radius;
+        const z = Math.sin(angle)*radius;
+
+        const wall = new THREE.Mesh(
+          new THREE.BoxGeometry(.21, .25, .19),
+          wallMat
+        );
+
+        wall.position.set(x, .14, z);
+        wall.rotation.y = -angle;
+        wall.castShadow = true;
+        mazeGroup.add(wall);
+
+        walls.push({x, z, r:.17});
+      }
+
+      const ringGlow = new THREE.Mesh(
+        new THREE.TorusGeometry(radius, .018, 5, 100),
+        mat(0x38517a, .2, .5, 0x152b52)
+      );
+
+      ringGlow.rotation.x = Math.PI/2;
+      ringGlow.position.y = .025;
+      mazeGroup.add(ringGlow);
+    }
+
+    // Starting point.
+    ballPos.set(0, -(R-.45));
+
+    // Exit portal.
+    const goalAngle = Math.PI/2 + (level-1)*.16;
+
+    goal = new THREE.Group();
+
+    const hoop = new THREE.Mesh(
+      new THREE.TorusGeometry(.28, .065, 12, 36),
+      goldMat
+    );
+
+    hoop.rotation.x = Math.PI/2;
+    hoop.position.y = .2;
+    goal.add(hoop);
+
+    const glow = new THREE.PointLight(0xffbd59, 2, 2.5);
+    glow.position.y = .5;
+    goal.add(glow);
+
+    goal.position.set(
+      Math.cos(goalAngle)*(R-.27),
+      .08,
+      Math.sin(goalAngle)*(R-.27)
+    );
+
+    mazeGroup.add(goal);
+
+    // Moving hazards.
+    for (
+      let i = 0;
+      i < cfg.blockers + Math.floor((level-1)/2);
+      i++
+    ) {
+      const radius = R*(.36+(i%3)*.14);
+      const angle = i*2.4+.4;
+      const pivot = new THREE.Group();
+
+      pivot.position.set(
+        Math.cos(angle)*radius,
+        .18,
+        Math.sin(angle)*radius
+      );
+
+      const hazard = new THREE.Mesh(
+        new THREE.BoxGeometry(.85, .16, .18),
+        mat(0xff637c, .4, .3, 0x68132b)
+      );
+
+      hazard.castShadow = true;
+      pivot.add(hazard);
+      mazeGroup.add(pivot);
+
+      blockers.push({
+        pivot,
+        radius,
+        angle,
+        speed:(i%2 ? -.55 : .48)*(1+i*.09)
+      });
+    }
+
+    if (ball) scene.remove(ball);
+
+    ball = new THREE.Mesh(
+      new THREE.SphereGeometry(ballR, 24, 18),
+      ballMat
+    );
+
+    ball.castShadow = true;
+    mazeGroup.add(ball);
+
+    resetBall(false);
+
+    $('#obstacleCount').textContent =
+      `${rings} obstacle rings`;
+
+    $('#difficultyBadge').textContent = difficulty.toUpperCase();
+    $('#progressText').textContent = '0%';
+    $('#progressBar').style.width = '0%';
+    $('#levelNum').textContent = String(level).padStart(2, '0');
+  }
+
+  function resetBall(count=true) {
+    if (count) falls++;
+
+    $('#falls').textContent = falls;
+
+    ballPos.set(0, -(R-.42));
+    ballVel.set(0, 0);
+
+    updateBall();
+
+    if (count) showToast('Ball reset — try a different angle');
+  }
+
+  function updateBall() {
+    ball.position.set(ballPos.x, .2, ballPos.y);
+  }
+
+  function showToast(message) {
+    $('#toast').textContent = message;
+    $('#toast').style.opacity = 1;
+
+    clearTimeout(toastTimer);
+
+    toastTimer = setTimeout(() => {
+      $('#toast').style.opacity = 0;
+    }, 1500);
+  }
+
+  function resize() {
+    const wrap = $('.canvas-wrap');
+    const w = wrap.clientWidth;
+    const h = wrap.clientHeight;
+
+    renderer.setSize(w, h, false);
+    camera.aspect = w/h;
+    camera.updateProjectionMatrix();
+  }
+
+  // Detect collisions with walls and moving hazards.
+  function collide(x, z) {
+    for (const wall of walls) {
+      const dx = x-wall.x;
+      const dz = z-wall.z;
+
+      if (dx*dx + dz*dz < (ballR+wall.r)**2) {
+        return true;
+      }
+    }
+
+    for (const hazard of blockers) {
+      const dx = x-hazard.pivot.position.x;
+      const dz = z-hazard.pivot.position.z;
+
+      if (Math.abs(dx)<.48 && Math.abs(dz)<.28) {
+        return true;
+      }
+    }
+
+    return Math.hypot(x, z) > R-.18;
+  }
+
+  function formatTime(time) {
+    const seconds = Math.floor(time);
+
+    return String(Math.floor(seconds/60)).padStart(2,'0') +
+      ':' +
+      String(seconds%60).padStart(2,'0');
+  }
+
+  function frame(now) {
+    requestAnimationFrame(frame);
+
+    const dt = Math.min((now-last)/1000, .04);
+    last = now;
+
+    if (running) {
+      elapsed += dt;
+
+      const x =
+        (keys.ArrowRight || keys.d || buttons.right ? 1 : 0) -
+        (keys.ArrowLeft || keys.a || buttons.left ? 1 : 0);
+
+      const z =
+        (keys.ArrowDown || keys.s || buttons.down ? 1 : 0) -
+        (keys.ArrowUp || keys.w || buttons.up ? 1 : 0);
+
+      const cfg = settings[difficulty];
+
+      ballVel.x += x*5.4*cfg.speed*dt;
+      ballVel.y += z*5.4*cfg.speed*dt;
+
+      ballVel.multiplyScalar(Math.pow(.985, dt*60));
+      ballVel.clampLength(0, 3.2);
+
+      const nx = ballPos.x + ballVel.x*dt;
+      const nz = ballPos.y + ballVel.y*dt;
+
+      if (collide(nx, nz)) {
+        if (!collide(nx, ballPos.y)) {
+          ballPos.x = nx;
+          ballVel.y *= -.25;
+        } else if (!collide(ballPos.x, nz)) {
+          ballPos.y = nz;
+          ballVel.x *= -.25;
+        } else {
+          ballVel.multiplyScalar(-.25);
+        }
+      } else {
+        ballPos.set(nx, nz);
+      }
+
+      // Animate hazards.
+      for (const hazard of blockers) {
+        hazard.angle += hazard.speed*dt;
+
+        hazard.pivot.position.set(
+          Math.cos(hazard.angle)*hazard.radius,
+          .18,
+          Math.sin(hazard.angle)*hazard.radius
+        );
+
+        hazard.pivot.rotation.y = -hazard.angle;
+      }
+
+      updateBall();
+
+      // Check the exit.
+      const distance = Math.hypot(
+        ballPos.x-goal.position.x,
+        ballPos.y-goal.position.z
+      );
+
+      if (distance < .38) {
+        running = false;
+
+        $('#overlayTitle').textContent = 'Maze escaped!';
+        $('#overlayText').textContent =
+          `You cleared level ${level} in ${formatTime(elapsed)}. The next maze will be tougher.`;
+
+        $('#nextBtn').textContent = 'NEXT LEVEL →';
+        $('#overlay').classList.add('show');
+      }
+
+      progress = Math.max(progress, Math.min(100,
+        Math.round(
+          (R-Math.hypot(ballPos.x,ballPos.y))/(R*1.6)*100+8
+        )
+      ));
+
+      $('#progressText').textContent = progress+'%';
+      $('#progressBar').style.width = progress+'%';
+    }
+
+    $('#timer').textContent = formatTime(elapsed);
+
+    // Tilt the maze in the direction of movement.
+    const tiltX =
+      (keys.ArrowDown || keys.s || buttons.down ? 1 : 0) -
+      (keys.ArrowUp || keys.w || buttons.up ? 1 : 0);
+
+    const tiltZ =
+      (keys.ArrowRight || keys.d || buttons.right ? 1 : 0) -
+      (keys.ArrowLeft || keys.a || buttons.left ? 1 : 0);
+
+    mazeGroup.rotation.x +=
+      (.12+tiltX*.13-mazeGroup.rotation.x)*.08;
+
+    mazeGroup.rotation.z +=
+      (tiltZ*.13-mazeGroup.rotation.z)*.08;
+
+    renderer.render(scene, camera);
+  }
+
+  // On-screen arrow controls.
+  $$('[data-dir]').forEach(button => {
+    const direction = button.dataset.dir;
+
+    button.addEventListener('pointerdown', event => {
+      event.preventDefault();
+      buttons[direction] = true;
+      button.setPointerCapture(event.pointerId);
+    });
+
+    ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(type => {
+      button.addEventListener(type, () => {
+        buttons[direction] = false;
+      });
+    });
+  });
+
+  // Keyboard controls.
+  window.addEventListener('keydown', event => {
+    if (
+      ['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' ']
+        .includes(event.key)
+    ) {
+      event.preventDefault();
+    }
+
+    keys[event.key] = true;
+
+    if (event.key === ' ') resetBall();
+  });
+
+  window.addEventListener('keyup', event => {
+    keys[event.key] = false;
+  });
+
+  window.addEventListener('blur', () => {
+    keys = {};
+    buttons = {};
+  });
+
+  $('#resetBtn').addEventListener('click', () => resetBall());
+
+  // Difficulty selection.
+  $$('.difficulty').forEach(button => {
+    button.addEventListener('click', () => {
+      difficulty = button.dataset.diff;
+
+      level = 1;
+      falls = 0;
+      elapsed = 0;
+      progress = 0;
+      running = true;
+
+      $('#falls').textContent = '0';
+      $('#overlay').classList.remove('show');
+
+      $$('.difficulty').forEach(item => {
+        item.classList.toggle('active', item === button);
+      });
+
+      makeMaze();
+      showToast(difficulty.toUpperCase()+' maze selected');
+    });
+  });
+
+  // Next level.
+  $('#nextBtn').addEventListener('click', () => {
+    level++;
+    elapsed = 0;
+    progress = 0;
+    running = true;
+
+    $('#overlay').classList.remove('show');
+
+    makeMaze();
+    showToast('Level '+level+' — new obstacles added');
+  });
+
+  window.addEventListener('resize', resize);
+
+  makeMaze();
+  resize();
+
+  $('#loading').style.display = 'none';
+
+  requestAnimationFrame(frame);
+})();
