@@ -4,123 +4,218 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sphere Roll — 3D Maze</title>
+  <meta name="theme-color" content="#101827">
+  <title>VendTech 3D — Vending Machine Simulator</title>
   <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+  <script src="script.js" defer></script>
 </head>
 <body>
-<div id="app">
-  <header>
+  <header class="topbar">
     <div>
-      <div class="eyebrow">3D PHYSICS CHALLENGE</div>
-      <h1>SPHERE <span>ROLL</span></h1>
-      <p>Rotate the maze. Guide the ball through obstacles and escape!</p>
+      <div class="brand">VEND<span>TECH</span></div>
+      <div class="subtitle">INTERACTIVE VENDING SIMULATOR</div>
     </div>
-    <div class="top-stats">
-      <div><small>LEVEL</small><b id="levelNum">01</b></div>
-      <div><small>TIME</small><b id="timer">00:00</b></div>
-      <div><small>FALLS</small><b id="falls">0</b></div>
+    <div class="status-pill">
+      <span class="status-dot"></span>
+      SIMULATION ONLINE
     </div>
   </header>
 
-  <main>
-    <section class="game-panel">
-      <div class="canvas-wrap">
-        <div id="loading">Building your maze…</div>
-        <div class="canvas-label">SPHERICAL MAZE
-          <span id="difficultyBadge">EASY</span>
+  <main class="layout">
+    <section class="machine-wrap">
+      <div class="machine">
+        <div class="machine-top">
+          <div class="machine-logo">VT <span>VENDTECH</span></div>
+          <div class="machine-light"></div>
         </div>
-        <div class="help-chip">WASD / ARROWS to tilt · SPACE to reset</div>
-        <div id="toast"></div>
 
-        <div id="overlay" class="overlay">
-          <div class="overlay-card">
-            <div class="win-icon">✦</div>
-            <h2 id="overlayTitle">Maze escaped!</h2>
-            <p id="overlayText">Great rolling!</p>
-            <button id="nextBtn">NEXT LEVEL →</button>
+        <div class="machine-body">
+          <section class="display-section">
+            <div class="display-heading">
+              <div>
+                <span class="eyebrow">PRODUCT DISPLAY</span>
+                <h1>Choose your item</h1>
+              </div>
+              <span id="stock-count" class="stock-badge">100 ITEMS</span>
+            </div>
+            <div id="product-grid" class="product-grid"></div>
+          </section>
+
+          <aside class="control-panel">
+            <div class="lcd">
+              <div class="lcd-top">
+                <span>VENDTECH OS</span>
+                <span id="clock">READY</span>
+              </div>
+              <div id="screen-message" class="screen-message">
+                Welcome! Select a product.
+              </div>
+              <div class="lcd-divider"></div>
+              <div class="lcd-row">
+                <span>SELECTED</span>
+                <strong id="selected-code">---</strong>
+              </div>
+              <div class="lcd-row">
+                <span>PRICE</span>
+                <strong id="selected-price">JD 0.00</strong>
+              </div>
+              <div class="lcd-row">
+                <span>CREDIT</span>
+                <strong id="credit-display">JD 0.00</strong>
+              </div>
+              <div class="lcd-row total-row">
+                <span>CHANGE DUE</span>
+                <strong id="change-display">JD 0.00</strong>
+              </div>
+            </div>
+
+            <div class="keypad-panel">
+              <label for="code-input">PRODUCT CODE</label>
+              <div class="code-entry">
+                <input id="code-input" maxlength="3" placeholder="A01"
+                  autocomplete="off" aria-label="Product code">
+                <button id="select-code-btn" class="small-button">SELECT</button>
+              </div>
+              <div class="keypad" id="keypad">
+                <button data-key="1">1</button>
+                <button data-key="2">2</button>
+                <button data-key="3">3</button>
+                <button data-key="4">4</button>
+                <button data-key="5">5</button>
+                <button data-key="6">6</button>
+                <button data-key="7">7</button>
+                <button data-key="8">8</button>
+                <button data-key="9">9</button>
+                <button data-key="clear" class="key-clear">CLR</button>
+                <button data-key="0">0</button>
+                <button data-key="enter" class="key-enter">↵</button>
+              </div>
+            </div>
+
+            <div class="payment-panel">
+              <div class="section-title">PAYMENT METHODS</div>
+              <div class="cash-grid">
+                <button class="cash-button" data-cash="0.05">5 fils</button>
+                <button class="cash-button" data-cash="0.10">10 fils</button>
+                <button class="cash-button" data-cash="0.25">25 fils</button>
+                <button class="cash-button" data-cash="0.50">50 fils</button>
+                <button class="cash-button" data-cash="1">1 JD</button>
+                <button class="cash-button" data-cash="5">5 JD</button>
+                <button class="cash-button" data-cash="10">10 JD</button>
+                <button class="cash-button" data-cash="20">20 JD</button>
+              </div>
+              <div class="cash-status">
+                <span>Cash accepted</span>
+                <span class="green-text">● READY</span>
+              </div>
+              <div class="digital-payments">
+                <button id="card-btn" class="digital-button">
+                  <span>▰</span>
+                  <span>Pay by card<small>SIMULATED</small></span>
+                </button>
+                <button id="tap-btn" class="digital-button">
+                  <span>)))</span>
+                  <span>Contactless<small>SIMULATED NFC</small></span>
+                </button>
+              </div>
+              <button id="buy-btn" class="buy-button">PURCHASE / DISPENSE</button>
+              <button id="cancel-btn" class="cancel-button">CANCEL & REFUND</button>
+            </div>
+          </aside>
+        </div>
+
+        <div class="machine-bottom">
+          <div class="vent"></div>
+          <div class="service-label">VT-100 · MODEL 2026 · SIMULATOR</div>
+          <div class="vent"></div>
+        </div>
+
+        <div class="retrieval-area">
+          <div class="retrieval-label">PICK UP YOUR PRODUCT</div>
+          <div class="retrieval-window">
+            <div id="delivery-animation" class="delivery-animation">
+              <div class="delivery-icon">📦</div>
+              <span id="delivery-text">Your products appear here</span>
+            </div>
           </div>
+          <button id="retrieve-btn" class="retrieve-button" disabled>
+            RETRIEVE ITEM
+          </button>
         </div>
       </div>
 
-      <div class="controls">
-        <div class="dpad">
-          <button data-dir="up">▲</button>
-          <div>
-            <button data-dir="left">◀</button>
-            <button id="resetBtn" class="reset">↺</button>
-            <button data-dir="right">▶</button>
-          </div>
-          <button data-dir="down">▼</button>
-        </div>
-
-        <div class="control-copy">
-          <b>Control the sphere</b>
-          <p>Hold the buttons to tilt the maze. Follow the gaps and reach the glowing exit.</p>
-          <div class="legend">
-            <span><i class="dot ball-dot"></i>Your ball</span>
-            <span><i class="dot wall-dot"></i>Barriers</span>
-            <span><i class="dot goal-dot"></i>Exit</span>
-          </div>
-        </div>
-      </div>
+      <div class="machine-shadow"></div>
+      <p class="machine-caption">VENDTECH VT-100 · DIGITAL TWIN SIMULATION</p>
     </section>
 
     <aside class="sidebar">
-      <div class="side-card">
-        <h3>CHOOSE DIFFICULTY</h3>
-        <p>Harder modes add more rings, blockers, and tighter routes.</p>
-
-        <div class="difficulty-list">
-          <button class="difficulty active" data-diff="easy">
-            <span class="diff-icon">🟢</span>
-            <span><b>Easy</b><small>2 rings · wide paths</small></span>
-            <span class="check">✓</span>
-          </button>
-          <button class="difficulty" data-diff="normal">
-            <span class="diff-icon">🔵</span>
-            <span><b>Normal</b><small>3 rings · more turns</small></span>
-            <span class="check">✓</span>
-          </button>
-          <button class="difficulty" data-diff="hard">
-            <span class="diff-icon">🟣</span>
-            <span><b>Hard</b><small>4 rings · moving hazards</small></span>
-            <span class="check">✓</span>
-          </button>
-          <button class="difficulty" data-diff="expert">
-            <span class="diff-icon">🔴</span>
-            <span><b>Expert</b><small>5 rings · narrow routes</small></span>
-            <span class="check">✓</span>
-          </button>
-        </div>
-      </div>
-
-      <div class="side-card">
+      <section class="info-card">
         <div class="card-heading">
-          <h3>MAZE PROGRESS</h3>
-          <b id="progressText">0%</b>
+          <span class="card-icon">◉</span>
+          <div><h2>Machine status</h2><p>Live operating information</p></div>
         </div>
-        <div class="progress-track">
-          <div id="progressBar"></div>
-        </div>
-        <div class="progress-foot">
-          <span id="obstacleCount">2 obstacle rings</span>
-          <span>Start → Exit</span>
-        </div>
-      </div>
+        <div class="stat-row"><span>Operating status</span><strong id="machine-status">READY</strong></div>
+        <div class="stat-row"><span>Items in stock</span><strong id="stat-stock">100 / 100</strong></div>
+        <div class="stat-row"><span>Items sold</span><strong id="stat-sold">0</strong></div>
+        <div class="stat-row"><span>Sales revenue</span><strong id="stat-revenue">JD 0.00</strong></div>
+        <div class="stat-row"><span>Cash in machine</span><strong id="stat-cash">JD 0.00</strong></div>
+        <div class="stat-row"><span>Transactions</span><strong id="stat-transactions">0</strong></div>
+      </section>
 
-      <div class="side-card tip-card">
-        <div class="tip-icon">✧</div>
-        <div>
-          <b>Rolling tip</b>
-          <p>Follow the gaps in each ring. Reset your ball anytime if you get stuck.</p>
+      <section class="info-card">
+        <div class="card-heading">
+          <span class="card-icon">▤</span>
+          <div><h2>Transaction log</h2><p>Recent machine activity</p></div>
         </div>
-      </div>
+        <div id="transaction-log" class="transaction-log">
+          <div class="empty-log">Waiting for first transaction...</div>
+        </div>
+      </section>
+
+      <section class="info-card service-card">
+        <div class="card-heading">
+          <span class="card-icon">⚙</span>
+          <div><h2>Service panel</h2><p>Simulator maintenance tools</p></div>
+        </div>
+        <div class="service-actions">
+          <button id="jam-btn" class="service-button">Simulate jam</button>
+          <button id="clear-jam-btn" class="service-button">Clear jam</button>
+          <button id="restock-btn" class="service-button">Restock all</button>
+          <button id="reset-btn" class="service-button danger-button">Factory reset</button>
+        </div>
+        <p class="service-note">
+          Service controls are for testing the simulation. Factory reset erases
+          saved stock, sales, and transaction history.
+        </p>
+      </section>
+
+      <section class="info-card help-card">
+        <h2>How to use</h2>
+        <ol>
+          <li>Choose an item from the display or enter its code.</li>
+          <li>Insert virtual cash, or use a simulated digital payment.</li>
+          <li>Press Purchase / Dispense.</li>
+          <li>Retrieve your item. Cash purchases return change automatically.</li>
+          <li>Cancel before dispensing to request a cash refund.</li>
+        </ol>
+      </section>
+      <div class="save-indicator"><span>●</span> <span id="save-status">Progress saves automatically</span></div>
     </aside>
   </main>
 
-  <footer>SPHERE ROLL <span>•</span> A 3D MAZE CHALLENGE</footer>
-</div>
-<script src="script.js"></script>
+  <footer>
+    VENDTECH VT-100 SIMULATOR · ALL PAYMENTS ARE VIRTUAL · NO REAL MONEY IS CHARGED
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <dialog id="result-dialog" class="result-dialog">
+    <div class="dialog-content">
+      <div id="dialog-icon" class="dialog-icon">✓</div>
+      <h2 id="dialog-title">Transaction complete</h2>
+      <p id="dialog-message">Your product is ready.</p>
+      <button id="dialog-close" class="buy-button">CONTINUE</button>
+    </div>
+  </dialog>
 </body>
 </html>
